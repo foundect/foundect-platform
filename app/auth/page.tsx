@@ -2,213 +2,226 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthCard } from "@/components/layouts/AuthCard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, User, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { GlassButton } from "@/components/ui/GlassButton";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { Building2, User, ArrowRight, Shield, Sparkles } from "lucide-react";
 
 export default function AuthPage() {
   const router = useRouter();
-  const [showSignupForm, setShowSignupForm] = useState<"investor" | "business" | null>(null);
+  const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     console.log("Login submitted");
     
     // TODO: Implement Supabase authentication
     // Simulated login - redirect to investor dashboard after 1 second
-    setTimeout(() => {
-      alert("Login successful! (Simulated)\n\nRedirecting to Investor Dashboard...");
-      router.push("/investor/home");
-    }, 1000);
-  };
-
-  const handleSignup = (e: React.FormEvent, type: "investor" | "business") => {
-    e.preventDefault();
-    setIsLoading(true);
-    console.log(`${type} signup submitted`);
-    
-    // TODO: Implement Supabase authentication with role assignment
-    // Simulated signup - redirect based on role after 1 second
-    setTimeout(() => {
-      const destination = type === "investor" ? "/investor/home" : "/business/home";
-      alert(`Signup successful! (Simulated)\n\nAccount type: ${type}\nRedirecting to ${type} dashboard...`);
-      router.push(destination);
-    }, 1000);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    router.push("/investor/home");
+    setIsLoading(false);
   };
 
   return (
-    <AuthCard>
-      <Tabs defaultValue="login" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="login">Login</TabsTrigger>
-          <TabsTrigger value="signup" onClick={() => setShowSignupForm(null)}>
-            Sign Up
-          </TabsTrigger>
-        </TabsList>
+    <div className="w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+      {/* Left Side - Auth Form */}
+      <GlassCard className="p-8 md:p-10">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="h-6 w-6 text-blue-500" />
+            <GlassCardTitle className="text-2xl">
+              {activeTab === "login" ? "Welcome Back" : "Get Started"}
+            </GlassCardTitle>
+          </div>
+          <p className="text-gray-600">
+            {activeTab === "login" 
+              ? "Sign in to your Foundect account" 
+              : "Choose your account type to begin"}
+          </p>
+        </GlassCardHeader>
 
-        {/* Login Tab */}
-        <TabsContent value="login">
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="login-email">Email</Label>
-              <Input
+        <GlassCardContent>
+          {/* Tab Switcher */}
+          <div className="flex gap-2 mb-8 glass-bg rounded-pill p-1">
+            <button
+              onClick={() => setActiveTab("login")}
+              className={`flex-1 py-2 px-4 rounded-pill text-sm font-medium transition-all ${
+                activeTab === "login"
+                  ? "bg-gradient-to-r from-blue-500 to-accent-1 text-white shadow-md"
+                  : "text-gray-600 hover:text-blue-500"
+              }`}
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setActiveTab("signup")}
+              className={`flex-1 py-2 px-4 rounded-pill text-sm font-medium transition-all ${
+                activeTab === "signup"
+                  ? "bg-gradient-to-r from-blue-500 to-accent-1 text-white shadow-md"
+                  : "text-text-900 hover:text-blue-500"
+              }`}
+            >
+              Sign Up
+            </button>
+          </div>
+
+          {/* Login Form */}
+          {activeTab === "login" && (
+            <form onSubmit={handleLogin} className="space-y-5 animate-fade-in">
+              <GlassInput
+                label="Email"
                 id="login-email"
                 type="email"
                 placeholder="your@email.com"
                 required
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="login-password">Password</Label>
-              <Input
+              <GlassInput
+                label="Password"
                 id="login-password"
                 type="password"
                 placeholder="••••••••"
                 required
               />
-            </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Logging in...
-                </>
-              ) : (
-                "Login"
-              )}
-            </Button>
-            <p className="text-xs text-center text-muted-foreground">
-              {/* TODO: Add forgot password functionality */}
-              <a href="#" className="hover:text-primary">Forgot password?</a>
-            </p>
-          </form>
-        </TabsContent>
+              
+              <div className="flex justify-end">
+                <Link href="#" className="text-sm text-blue-500 hover:text-blue-600">
+                  Forgot password?
+                </Link>
+              </div>
 
-        {/* Sign Up Tab */}
-        <TabsContent value="signup">
-          {!showSignupForm ? (
-            <div className="space-y-4">
-              <p className="text-center text-sm text-muted-foreground mb-4">
-                Choose your account type:
+              <GlassButton
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="w-full"
+                loading={isLoading}
+                icon={<ArrowRight className="h-5 w-5" />}
+              >
+                {isLoading ? "Logging in..." : "Login"}
+              </GlassButton>
+
+              <p className="text-xs text-center text-gray-500">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("signup")}
+                  className="text-blue-500 hover:text-blue-600 font-medium"
+                >
+                  Sign up
+                </button>
+              </p>
+            </form>
+          )}
+
+          {/* Signup - Account Type Selection */}
+          {activeTab === "signup" && (
+            <div className="space-y-4 animate-fade-in">
+              <p className="text-center text-sm text-gray-600 mb-6">
+                Choose your account type to continue:
               </p>
 
-              <Card
-                className="cursor-pointer hover:border-primary transition-colors"
-                onClick={() => setShowSignupForm("investor")}
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <User className="h-6 w-6 text-primary" />
+              <Link href="/auth/investor">
+                <GlassCard className="p-6 cursor-pointer hover:scale-[1.02] transition-transform group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-pill glass-bg flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                      <User className="h-7 w-7 text-blue-500 group-hover:text-white transition-colors" />
                     </div>
-                    <div>
-                      <CardTitle className="text-lg">Individual Investor</CardTitle>
-                      <CardDescription>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg text-text-900 mb-1">Individual Investor</h3>
+                      <p className="text-sm text-gray-600">
                         Invest in halal SME campaigns
-                      </CardDescription>
+                      </p>
                     </div>
+                    <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
                   </div>
-                </CardHeader>
-              </Card>
+                </GlassCard>
+              </Link>
 
-              <Card
-                className="cursor-pointer hover:border-primary transition-colors"
-                onClick={() => setShowSignupForm("business")}
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <Building2 className="h-6 w-6 text-blue-600" />
+              <Link href="/auth/business">
+                <GlassCard className="p-6 cursor-pointer hover:scale-[1.02] transition-transform group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-pill glass-bg flex items-center justify-center group-hover:bg-accent-1 transition-colors">
+                      <Building2 className="h-7 w-7 text-accent-1 group-hover:text-white transition-colors" />
                     </div>
-                    <div>
-                      <CardTitle className="text-lg">Business / SME</CardTitle>
-                      <CardDescription>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg text-text-900 mb-1">Business / SME</h3>
+                      <p className="text-sm text-gray-600">
                         Raise halal funding for your business
-                      </CardDescription>
+                      </p>
                     </div>
+                    <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-accent-1 transition-colors" />
                   </div>
-                </CardHeader>
-              </Card>
-            </div>
-          ) : (
-            <div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSignupForm(null)}
-                className="mb-4"
-              >
-                ← Back
-              </Button>
+                </GlassCard>
+              </Link>
 
-              <h3 className="text-lg font-semibold mb-4">
-                Sign up as {showSignupForm === "investor" ? "Investor" : "Business"}
-              </h3>
-
-              <form onSubmit={(e) => handleSignup(e, showSignupForm)} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">
-                    {showSignupForm === "investor" ? "Full Name" : "Business Name"}
-                  </Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    placeholder={showSignupForm === "investor" ? "John Doe" : "Your Business Ltd."}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-phone">Phone</Label>
-                  <Input
-                    id="signup-phone"
-                    type="tel"
-                    placeholder="+880 1XXX-XXXXXX"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Account...
-                    </>
-                  ) : (
-                    "Create Account"
-                  )}
-                </Button>
-                <p className="text-xs text-center text-muted-foreground">
-                  By signing up, you agree to our Terms & Conditions
-                </p>
-              </form>
+              <p className="text-xs text-center text-gray-500 mt-6">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("login")}
+                  className="text-blue-500 hover:text-blue-600 font-medium"
+                >
+                  Login
+                </button>
+              </p>
             </div>
           )}
-        </TabsContent>
-      </Tabs>
-    </AuthCard>
+        </GlassCardContent>
+      </GlassCard>
+
+      {/* Right Side - Decorative/Info */}
+      <div className="hidden md:block">
+        <div className="space-y-6">
+          <div className="animate-fade-in">
+            <span className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-pill glass-bg border border-white/30 text-sm font-medium text-blue-500">
+              <Sparkles className="h-4 w-4 text-accent-1" />
+              Trusted by thousands
+            </span>
+            <h2 className="text-4xl font-bold mb-4 text-text-900">
+              Join the Halal Investment Revolution
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Connect with Shari'ah-compliant opportunities and support local businesses while earning ethical returns.
+            </p>
+          </div>
+
+          <div className="space-y-4 animate-fade-in animation-delay-500">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-pill glass-bg flex items-center justify-center flex-shrink-0">
+                <Shield className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-900 mb-1">100% Shari'ah-Compliant</h4>
+                <p className="text-sm text-gray-600">All investments verified to be halal and interest-free</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-pill glass-bg flex items-center justify-center flex-shrink-0">
+                <Shield className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-900 mb-1">Transparent & Secure</h4>
+                <p className="text-sm text-gray-600">Full visibility into where your funds are going</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-pill glass-bg flex items-center justify-center flex-shrink-0">
+                <Shield className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-text-900 mb-1">Support Local SMEs</h4>
+                <p className="text-sm text-gray-600">Help businesses grow while earning profit shares</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

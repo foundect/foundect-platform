@@ -1,230 +1,171 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { GlassButton } from "@/components/ui/GlassButton";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { Settings, Lock, Bell, Download, Trash2, Users } from "lucide-react";
+import { useState } from "react";
 
 export default function BusinessSettingsPage() {
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [investorUpdates, setInvestorUpdates] = useState(true);
+  const [campaignAlerts, setCampaignAlerts] = useState(true);
+
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Password change requested");
-    // TODO: Implement password change with Supabase auth
-  };
-
-  const handleDeactivate = () => {
-    if (confirm("Are you sure you want to deactivate your business account? This will pause all active campaigns.")) {
-      console.log("Account deactivation requested");
-      // TODO: Implement account deactivation
-    }
+    console.log("Password change submitted");
+    // TODO: Implement password change with Supabase
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Settings</h1>
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="animate-fade-in">
+        <div className="flex items-center gap-2 mb-2">
+          <Settings className="h-7 w-7 text-blue-500" />
+          <h1 className="text-3xl font-bold text-text-900">Settings</h1>
+        </div>
         <p className="text-gray-600">Manage your business account preferences</p>
       </div>
 
       {/* Security Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Security</CardTitle>
-          <CardDescription>Manage your password and security settings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="current-password">Current Password</Label>
-              <Input
-                id="current-password"
-                type="password"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <Input
-                id="new-password"
-                type="password"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <Button type="submit">Change Password</Button>
+      <GlassCard className="animate-fade-in animation-delay-500">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Lock className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Security</GlassCardTitle>
+          </div>
+          <p className="text-gray-600 mt-1">Update your password</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <form onSubmit={handlePasswordChange} className="space-y-5">
+            <GlassInput
+              label="Current Password"
+              id="currentPassword"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+            <GlassInput
+              label="New Password"
+              id="newPassword"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+            <GlassInput
+              label="Confirm New Password"
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+            <GlassButton type="submit" variant="primary">
+              Change Password
+            </GlassButton>
           </form>
-
-          <div className="mt-6 pt-6 border-t">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Two-Factor Authentication</p>
-                <p className="text-sm text-muted-foreground">
-                  Add an extra layer of security to your business account
-                </p>
-              </div>
-              <Button variant="outline">
-                {/* TODO: Implement 2FA */}
-                Enable 2FA
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Team Access */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Team Access</CardTitle>
-          <CardDescription>Manage who can access your business account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                <strong>Coming Soon:</strong> Add team members to help manage your campaigns and respond to investors.
-              </p>
-            </div>
-
-            <Button variant="outline" disabled>
-              {/* TODO: Implement team member management */}
-              Add Team Member
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Notification Preferences */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Notification Preferences</CardTitle>
-          <CardDescription>Choose what notifications you want to receive</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Email Notifications</p>
-              <p className="text-sm text-muted-foreground">
-                Receive updates about your campaigns via email
-              </p>
-            </div>
-            <Switch defaultChecked />
+      <GlassCard className="animate-fade-in animation-delay-1000">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Bell className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Notification Preferences</GlassCardTitle>
           </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">New Investment Alerts</p>
-              <p className="text-sm text-muted-foreground">
-                Get notified immediately when someone invests in your campaign
-              </p>
+          <p className="text-gray-600 mt-1">Choose how you want to be notified</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass">
+              <div>
+                <h4 className="font-semibold text-text-900">Email Notifications</h4>
+                <p className="text-sm text-gray-600">Receive campaign updates via email</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={(e) => setEmailNotifications(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
             </div>
-            <Switch defaultChecked />
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Milestone Notifications</p>
-              <p className="text-sm text-muted-foreground">
-                Receive alerts when your campaign reaches funding milestones
-              </p>
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass">
+              <div>
+                <h4 className="font-semibold text-text-900">Investor Updates</h4>
+                <p className="text-sm text-gray-600">Get notified about new investors</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={investorUpdates}
+                  onChange={(e) => setInvestorUpdates(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
             </div>
-            <Switch defaultChecked />
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Investor Questions</p>
-              <p className="text-sm text-muted-foreground">
-                Get notified when investors ask questions about your campaign
-              </p>
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass">
+              <div>
+                <h4 className="font-semibold text-text-900">Campaign Alerts</h4>
+                <p className="text-sm text-gray-600">Milestone and deadline reminders</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={campaignAlerts}
+                  onChange={(e) => setCampaignAlerts(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
             </div>
-            <Switch defaultChecked />
           </div>
+        </GlassCardContent>
+      </GlassCard>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Update Reminders</p>
-              <p className="text-sm text-muted-foreground">
-                Reminders to post regular updates for your investors
-              </p>
-            </div>
-            <Switch defaultChecked />
+      {/* Team Management */}
+      <GlassCard className="animate-fade-in animation-delay-1500">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Team Management</GlassCardTitle>
           </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Marketing Communications</p>
-              <p className="text-sm text-muted-foreground">
-                Receive tips and best practices for successful campaigns
-              </p>
-            </div>
-            <Switch />
+          <p className="text-gray-600 mt-1">Manage team access (Coming Soon)</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <div className="glass-bg rounded-glass p-4 text-center">
+            <p className="text-sm text-gray-600">Team management features will be available soon.</p>
           </div>
+        </GlassCardContent>
+      </GlassCard>
 
-          <Button variant="outline">
-            {/* TODO: Save notification preferences to Supabase */}
-            Save Preferences
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Business Account Controls */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Business Account Controls</CardTitle>
-          <CardDescription>Manage your business account status</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <p className="font-medium">Download Business Data</p>
-              <p className="text-sm text-muted-foreground">
-                Export all your campaign data and investor information
-              </p>
-            </div>
-            <Button variant="outline">
-              {/* TODO: Implement data export */}
-              Download
-            </Button>
+      {/* Data & Privacy */}
+      <GlassCard className="animate-fade-in animation-delay-2000">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Download className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Data & Privacy</GlassCardTitle>
           </div>
-
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <p className="font-medium">Pause All Campaigns</p>
-              <p className="text-sm text-muted-foreground">
-                Temporarily pause all active campaigns
-              </p>
-            </div>
-            <Button variant="outline">
-              {/* TODO: Implement campaign pause functionality */}
-              Pause Campaigns
-            </Button>
+          <p className="text-gray-600 mt-1">Manage your business data</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <div className="space-y-3">
+            <GlassButton variant="secondary" className="w-full justify-start">
+              <Download className="mr-2 h-4 w-4" />
+              Download Business Data
+            </GlassButton>
+            <GlassButton variant="ghost" className="w-full justify-start text-red-600 hover:bg-red-50">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Deactivate Business Account
+            </GlassButton>
           </div>
-
-          <div className="flex items-center justify-between p-4 border border-destructive rounded-lg">
-            <div>
-              <p className="font-medium text-destructive">Deactivate Business Account</p>
-              <p className="text-sm text-muted-foreground">
-                Temporarily disable your business account and all campaigns
-              </p>
-            </div>
-            <Button variant="destructive" onClick={handleDeactivate}>
-              Deactivate
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
     </div>
   );
 }
-

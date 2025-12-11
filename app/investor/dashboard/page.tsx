@@ -1,6 +1,7 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, DollarSign, Briefcase, PieChart } from "lucide-react";
+import { TrendingUp, DollarSign, Briefcase, PieChart, BarChart3 } from "lucide-react";
 
 // Dummy investment data
 const investments = [
@@ -53,106 +54,88 @@ export default function InvestorDashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Investment Dashboard</h1>
+    <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="animate-fade-in">
+        <h1 className="text-3xl font-bold mb-2 text-text-900">Investment Dashboard</h1>
         <p className="text-gray-600">Track and manage your portfolio</p>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalCurrentValue)}</div>
-            <p className="text-xs text-green-600 flex items-center mt-1">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              +{gainPercentage}% gain
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in animation-delay-500">
+        <StatCard
+          title="Portfolio Value"
+          value={formatCurrency(totalCurrentValue)}
+          subtitle={`+${gainPercentage}% gain`}
+          icon={<DollarSign className="h-5 w-5" />}
+          trend={`+${gainPercentage}%`}
+          valueColor="text-blue-500"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Invested</CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(totalInvested)}</div>
-            <p className="text-xs text-muted-foreground">
-              Principal amount
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Invested"
+          value={formatCurrency(totalInvested)}
+          subtitle="Principal amount"
+          icon={<Briefcase className="h-5 w-5" />}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Investments</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{investments.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Campaigns
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Active Investments"
+          value={investments.length.toString()}
+          subtitle="Campaigns"
+          icon={<PieChart className="h-5 w-5" />}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Gain</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(totalGain)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Unrealized gain
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Gain"
+          value={formatCurrency(totalGain)}
+          subtitle="Unrealized gain"
+          icon={<TrendingUp className="h-5 w-5" />}
+          valueColor="text-green-600"
+        />
       </div>
 
       {/* Chart Placeholder */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Portfolio Performance</CardTitle>
-          <CardDescription>Your investment growth over time</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed">
+      <GlassCard className="animate-fade-in animation-delay-1000">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Portfolio Performance</GlassCardTitle>
+          </div>
+          <p className="text-gray-600 mt-1">Your investment growth over time</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <div className="h-64 flex items-center justify-center glass-bg rounded-glass border-2 border-dashed border-white/30">
             <div className="text-center">
-              <PieChart className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">
-                {/* TODO: Add chart library (e.g., recharts) for portfolio visualization */}
+              <BarChart3 className="h-12 w-12 text-blue-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-600 font-medium">
                 Chart visualization coming soon
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {/* TODO: Add chart library (e.g., recharts) for portfolio visualization */}
+                Connect charting library to display performance
               </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* My Investments Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>My Investments</CardTitle>
-          <CardDescription>All your active investments</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <GlassCard className="animate-fade-in animation-delay-1500">
+        <GlassCardHeader>
+          <GlassCardTitle className="text-xl">My Investments</GlassCardTitle>
+          <p className="text-gray-600 mt-1">All your active investments</p>
+        </GlassCardHeader>
+        <GlassCardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium text-sm">Campaign</th>
-                  <th className="text-left py-3 px-4 font-medium text-sm">Invested</th>
-                  <th className="text-left py-3 px-4 font-medium text-sm">Current Value</th>
-                  <th className="text-left py-3 px-4 font-medium text-sm">Expected Return</th>
-                  <th className="text-left py-3 px-4 font-medium text-sm">Date</th>
-                  <th className="text-left py-3 px-4 font-medium text-sm">Status</th>
+                <tr className="border-b border-white/20">
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-text-900">Campaign</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-text-900">Invested</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-text-900">Current Value</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-text-900">Expected Return</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-text-900">Date</th>
+                  <th className="text-left py-3 px-4 font-semibold text-sm text-text-900">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -161,21 +144,23 @@ export default function InvestorDashboardPage() {
                   const gainPercent = ((gain / investment.amount) * 100).toFixed(1);
                   
                   return (
-                    <tr key={investment.id} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4 font-medium">{investment.campaign}</td>
-                      <td className="py-3 px-4">{formatCurrency(investment.amount)}</td>
-                      <td className="py-3 px-4">
+                    <tr key={investment.id} className="border-b border-white/10 hover:glass-bg transition-colors">
+                      <td className="py-4 px-4 font-medium text-text-900">{investment.campaign}</td>
+                      <td className="py-4 px-4 text-gray-700">{formatCurrency(investment.amount)}</td>
+                      <td className="py-4 px-4">
                         <div>
-                          <div className="font-medium">{formatCurrency(investment.currentValue)}</div>
-                          <div className="text-xs text-green-600">+{gainPercent}%</div>
+                          <div className="font-semibold text-text-900">{formatCurrency(investment.currentValue)}</div>
+                          <div className="text-xs text-green-600 font-medium">+{gainPercent}%</div>
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-sm">{investment.expectedReturn}</td>
-                      <td className="py-3 px-4 text-sm text-muted-foreground">
+                      <td className="py-4 px-4 text-sm text-gray-700">{investment.expectedReturn}</td>
+                      <td className="py-4 px-4 text-sm text-gray-600">
                         {new Date(investment.date).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4">
-                        <Badge variant="default">{investment.status}</Badge>
+                      <td className="py-4 px-4">
+                        <span className="glass-bg rounded-pill px-3 py-1 text-xs font-medium text-green-700 border border-green-500/20">
+                          {investment.status}
+                        </span>
                       </td>
                     </tr>
                   );
@@ -183,8 +168,8 @@ export default function InvestorDashboardPage() {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
     </div>
   );
 }

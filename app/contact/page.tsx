@@ -1,136 +1,183 @@
 "use client";
 
+import { useState } from "react";
 import { PublicHeader } from "@/components/layouts/PublicHeader";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Mail, MessageSquare, Phone } from "lucide-react";
+import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { GlassButton } from "@/components/ui/GlassButton";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { GlassTextarea } from "@/components/ui/GlassTextarea";
+import { GlassSelect } from "@/components/ui/GlassSelect";
+import { GlassNavBar } from "@/components/ui/GlassNavBar";
+import { AIChatDrawer } from "@/components/ui/AIChatDrawer";
+import { Mail, MessageSquare, Phone, Send, MapPin, Clock } from "lucide-react";
 
 export default function ContactPage() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [aiDrawerOpen, setAIDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     console.log("Contact form submitted");
     // TODO: Implement contact form backend (email service or Supabase)
+    
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    
     alert("Thank you for your message! We'll get back to you soon.");
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 relative overflow-hidden">
+      {/* Decorative background */}
+      <div className="absolute top-20 left-0 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl -z-10 animate-blob" />
+      <div className="absolute bottom-20 right-0 w-96 h-96 bg-accent-1/20 rounded-full blur-3xl -z-10 animate-blob animation-delay-2000" />
+      
       <PublicHeader />
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
+      <div className="container mx-auto px-4 pt-32 pb-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12 animate-fade-in">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-500 to-accent-1 bg-clip-text text-transparent">
+              Get In Touch
+            </h1>
             <p className="text-xl text-gray-600">
               Have questions? We'd love to hear from you.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card>
-              <CardHeader className="text-center">
-                <Mail className="h-10 w-10 text-primary mx-auto mb-2" />
-                <CardTitle className="text-lg">Email</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-sm text-gray-600">support@foundect.com</p>
-              </CardContent>
-            </Card>
+            <GlassCard className="p-6 text-center hover:scale-105 transition-transform">
+              <div className="w-16 h-16 rounded-pill glass-bg mx-auto mb-4 flex items-center justify-center">
+                <Mail className="h-8 w-8 text-blue-500" />
+              </div>
+              <GlassCardTitle className="text-lg mb-2">Email</GlassCardTitle>
+              <p className="text-sm text-gray-600">support@foundect.com</p>
+            </GlassCard>
 
-            <Card>
-              <CardHeader className="text-center">
-                <Phone className="h-10 w-10 text-primary mx-auto mb-2" />
-                <CardTitle className="text-lg">Phone</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-sm text-gray-600">+880 1XXX-XXXXXX</p>
-              </CardContent>
-            </Card>
+            <GlassCard className="p-6 text-center hover:scale-105 transition-transform">
+              <div className="w-16 h-16 rounded-pill glass-bg mx-auto mb-4 flex items-center justify-center">
+                <Phone className="h-8 w-8 text-blue-500" />
+              </div>
+              <GlassCardTitle className="text-lg mb-2">Phone</GlassCardTitle>
+              <p className="text-sm text-gray-600">+880 1XXX-XXXXXX</p>
+            </GlassCard>
 
-            <Card>
-              <CardHeader className="text-center">
-                <MessageSquare className="h-10 w-10 text-primary mx-auto mb-2" />
-                <CardTitle className="text-lg">Support</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-sm text-gray-600">24/7 Online Support</p>
-              </CardContent>
-            </Card>
+            <GlassCard className="p-6 text-center hover:scale-105 transition-transform">
+              <div className="w-16 h-16 rounded-pill glass-bg mx-auto mb-4 flex items-center justify-center">
+                <Clock className="h-8 w-8 text-blue-500" />
+              </div>
+              <GlassCardTitle className="text-lg mb-2">Support Hours</GlassCardTitle>
+              <p className="text-sm text-gray-600">24/7 Online Support</p>
+            </GlassCard>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Send us a message</CardTitle>
-              <CardDescription>
+          <GlassCard className="p-8 md:p-10">
+            <GlassCardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <MessageSquare className="h-6 w-6 text-blue-500" />
+                <GlassCardTitle className="text-2xl">Send us a message</GlassCardTitle>
+              </div>
+              <p className="text-gray-600">
                 Fill out the form below and we'll get back to you as soon as possible.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+            </GlassCardHeader>
+            <GlassCardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name *</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="Your name"
-                      required
-                    />
-                  </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <GlassInput
+                    label="Name"
+                    id="name"
+                    type="text"
+                    placeholder="Your name"
+                    required
+                  />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="topic">Topic *</Label>
-                  <Select required>
-                    <SelectTrigger id="topic">
-                      <SelectValue placeholder="Select a topic" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="general">General Inquiry</SelectItem>
-                      <SelectItem value="investor">Investor Support</SelectItem>
-                      <SelectItem value="business">Business Listing</SelectItem>
-                      <SelectItem value="technical">Technical Issue</SelectItem>
-                      <SelectItem value="partnership">Partnership Opportunity</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message">Message *</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Tell us how we can help you..."
-                    rows={6}
+                  <GlassInput
+                    label="Email"
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
                     required
                   />
                 </div>
 
-                <Button type="submit" size="lg" className="w-full">
-                  Send Message
-                </Button>
+                <GlassSelect
+                  label="Topic"
+                  id="topic"
+                  options={[
+                    { value: "general", label: "General Inquiry" },
+                    { value: "investor", label: "Investor Support" },
+                    { value: "business", label: "Business Listing" },
+                    { value: "technical", label: "Technical Issue" },
+                    { value: "partnership", label: "Partnership Opportunity" },
+                  ]}
+                  placeholder="Select a topic"
+                  required
+                />
 
-                <p className="text-xs text-center text-muted-foreground">
+                <GlassTextarea
+                  label="Message"
+                  id="message"
+                  placeholder="Tell us how we can help you..."
+                  rows={6}
+                  required
+                />
+
+                <GlassButton 
+                  type="submit" 
+                  variant="primary" 
+                  size="lg" 
+                  className="w-full"
+                  loading={loading}
+                  icon={<Send className="h-5 w-5" />}
+                >
+                  {loading ? "Sending..." : "Send Message"}
+                </GlassButton>
+
+                <p className="text-xs text-center text-gray-500">
                   We typically respond within 24 hours during business days.
                 </p>
               </form>
-            </CardContent>
-          </Card>
+            </GlassCardContent>
+          </GlassCard>
+
+          {/* Additional Info */}
+          <div className="mt-12 grid md:grid-cols-2 gap-6">
+            <GlassCard className="p-6">
+              <div className="flex items-start gap-4">
+                <MapPin className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-text-900 mb-2">Office Location</h3>
+                  <p className="text-sm text-gray-600">
+                    Dhaka, Bangladesh<br />
+                    (Full address coming soon)
+                  </p>
+                </div>
+              </div>
+            </GlassCard>
+
+            <GlassCard className="p-6">
+              <div className="flex items-start gap-4">
+                <MessageSquare className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-text-900 mb-2">Quick Response</h3>
+                  <p className="text-sm text-gray-600">
+                    For urgent inquiries, please use our AI chat assistant available 24/7 on all pages.
+                  </p>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Navigation */}
+      <GlassNavBar onAIClick={() => setAIDrawerOpen(true)} />
+      
+      {/* AI Chat Drawer */}
+      <AIChatDrawer open={aiDrawerOpen} onClose={() => setAIDrawerOpen(false)} />
     </div>
   );
 }

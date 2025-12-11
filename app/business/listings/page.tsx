@@ -1,61 +1,45 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Eye, Edit, MoreVertical } from "lucide-react";
+import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { GlassButton } from "@/components/ui/GlassButton";
+import { List, Plus, Eye, Edit, TrendingUp } from "lucide-react";
 
-// Dummy listings data
 const listings = [
   {
     id: 1,
-    title: "Green Textile Manufacturing - Expansion",
+    title: "Green Textile Manufacturing Expansion",
     status: "Live",
     targetAmount: 5000000,
     raisedAmount: 3200000,
-    investors: 87,
-    createdDate: "2024-10-15",
-    endDate: "2025-04-15",
+    investors: 28,
+    daysLeft: 45,
   },
   {
     id: 2,
-    title: "Sustainable Product Line Launch",
+    title: "Sustainable Packaging Solutions",
     status: "Live",
-    targetAmount: 3000000,
-    raisedAmount: 850000,
-    investors: 40,
-    createdDate: "2024-11-20",
-    endDate: "2025-05-20",
+    targetAmount: 3500000,
+    raisedAmount: 2100000,
+    investors: 20,
+    daysLeft: 60,
   },
   {
     id: 3,
-    title: "Equipment Upgrade Project",
+    title: "Organic Food Distribution Network",
     status: "Under Review",
     targetAmount: 4000000,
     raisedAmount: 0,
     investors: 0,
-    createdDate: "2024-12-01",
-    endDate: null,
+    daysLeft: 0,
   },
   {
     id: 4,
-    title: "Export Market Expansion",
-    status: "Draft",
-    targetAmount: 6000000,
-    raisedAmount: 0,
-    investors: 0,
-    createdDate: "2024-12-05",
-    endDate: null,
-  },
-  {
-    id: 5,
-    title: "Working Capital 2024 Q1",
+    title: "Halal Restaurant Chain Phase 1",
     status: "Completed",
-    targetAmount: 2000000,
-    raisedAmount: 2000000,
-    investors: 65,
-    createdDate: "2024-01-10",
-    endDate: "2024-07-10",
+    targetAmount: 2500000,
+    raisedAmount: 2500000,
+    investors: 35,
+    daysLeft: 0,
   },
 ];
 
@@ -68,161 +52,103 @@ export default function BusinessListingsPage() {
     return Math.min((raised / target) * 100, 100);
   };
 
-  const getStatusVariant = (status: string) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "Live":
-        return "default";
-      case "Completed":
-        return "secondary";
+        return "bg-green-500/10 text-green-700 border-green-500/20";
       case "Under Review":
-        return "outline";
+        return "bg-yellow-500/10 text-yellow-700 border-yellow-500/20";
+      case "Completed":
+        return "bg-blue-500/10 text-blue-700 border-blue-500/20";
       default:
-        return "outline";
+        return "bg-gray-500/10 text-gray-700 border-gray-500/20";
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between animate-fade-in">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Listings</h1>
+          <div className="flex items-center gap-2 mb-2">
+            <List className="h-7 w-7 text-blue-500" />
+            <h1 className="text-3xl font-bold text-text-900">My Listings</h1>
+          </div>
           <p className="text-gray-600">Manage your funding campaigns</p>
         </div>
-        <Button>
-          {/* TODO: Implement create listing flow */}
-          <Plus className="mr-2 h-4 w-4" />
+        <GlassButton variant="primary" icon={<Plus className="h-5 w-5" />}>
           Create New Listing
-        </Button>
+        </GlassButton>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Listings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{listings.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Live Campaigns</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {listings.filter(l => l.status === "Live").length}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Raised</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(listings.reduce((sum, l) => sum + l.raisedAmount, 0))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Investors</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {listings.reduce((sum, l) => sum + l.investors, 0)}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Listings Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Campaigns</CardTitle>
-          <CardDescription>View and manage your funding campaigns</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {listings.map((listing) => (
-              <div key={listing.id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-lg">{listing.title}</h3>
-                      <Badge variant={getStatusVariant(listing.status)}>
-                        {listing.status}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Created: {new Date(listing.createdDate).toLocaleDateString()}</span>
-                      {listing.endDate && (
-                        <span>Ends: {new Date(listing.endDate).toLocaleDateString()}</span>
-                      )}
-                      <span>{listing.investors} investors</span>
-                    </div>
+      <div className="grid md:grid-cols-2 gap-6">
+        {listings.map((listing, index) => (
+          <GlassCard
+            key={listing.id}
+            className="animate-fade-in hover:scale-[1.02] transition-transform"
+            style={{ animationDelay: `${(index + 1) * 200}ms` }}
+          >
+            <GlassCardHeader>
+              <div className="flex items-start justify-between mb-3">
+                <GlassCardTitle className="text-lg flex-1">{listing.title}</GlassCardTitle>
+                <span className={`glass-bg rounded-pill px-3 py-1 text-xs font-medium border ${getStatusColor(listing.status)}`}>
+                  {listing.status}
+                </span>
+              </div>
+            </GlassCardHeader>
+            <GlassCardContent className="space-y-4">
+              {/* Progress Bar */}
+              {listing.status !== "Under Review" && (
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-gray-600">Progress</span>
+                    <span className="font-semibold text-blue-500">
+                      {getProgressPercentage(listing.raisedAmount, listing.targetAmount).toFixed(0)}%
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => console.log(`View listing ${listing.id}`)}
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      View
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => console.log(`Edit listing ${listing.id}`)}
-                      disabled={listing.status === "Completed"}
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
+                  <div className="w-full bg-gray-200 rounded-pill h-2 overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-accent-1 h-2 rounded-pill transition-all duration-500"
+                      style={{
+                        width: `${getProgressPercentage(listing.raisedAmount, listing.targetAmount)}%`,
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>{formatCurrency(listing.raisedAmount)} raised</span>
+                    <span>{formatCurrency(listing.targetAmount)} goal</span>
                   </div>
                 </div>
+              )}
 
-                {listing.status !== "Draft" && (
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">Funding Progress</span>
-                      <span className="font-medium">
-                        {formatCurrency(listing.raisedAmount)} / {formatCurrency(listing.targetAmount)}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-primary rounded-full h-2 transition-all"
-                        style={{
-                          width: `${getProgressPercentage(listing.raisedAmount, listing.targetAmount)}%`,
-                        }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                      <span>
-                        {getProgressPercentage(listing.raisedAmount, listing.targetAmount).toFixed(1)}% funded
-                      </span>
-                    </div>
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="glass-bg rounded-glass p-3">
+                  <p className="text-xs text-gray-600 mb-1">Investors</p>
+                  <p className="text-lg font-semibold text-text-900">{listing.investors}</p>
+                </div>
+                {listing.status === "Live" && (
+                  <div className="glass-bg rounded-glass p-3">
+                    <p className="text-xs text-gray-600 mb-1">Days Left</p>
+                    <p className="text-lg font-semibold text-text-900">{listing.daysLeft}</p>
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* TODO: Add filters for status */}
-      {/* TODO: Add search functionality */}
-      {/* TODO: Add pagination */}
+              {/* Actions */}
+              <div className="flex gap-2">
+                <GlassButton variant="secondary" size="sm" className="flex-1" icon={<Eye className="h-4 w-4" />}>
+                  View
+                </GlassButton>
+                {listing.status !== "Completed" && (
+                  <GlassButton variant="ghost" size="sm" className="flex-1" icon={<Edit className="h-4 w-4" />}>
+                    Edit
+                  </GlassButton>
+                )}
+              </div>
+            </GlassCardContent>
+          </GlassCard>
+        ))}
+      </div>
     </div>
   );
 }
-

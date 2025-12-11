@@ -1,185 +1,155 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { GlassButton } from "@/components/ui/GlassButton";
+import { GlassInput } from "@/components/ui/GlassInput";
+import { Settings, Lock, Bell, Download, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 export default function InvestorSettingsPage() {
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [smsNotifications, setSmsNotifications] = useState(false);
+  const [investmentUpdates, setInvestmentUpdates] = useState(true);
+
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Password change requested");
-    // TODO: Implement password change with Supabase auth
-  };
-
-  const handleDeactivate = () => {
-    if (confirm("Are you sure you want to deactivate your account?")) {
-      console.log("Account deactivation requested");
-      // TODO: Implement account deactivation
-    }
+    console.log("Password change submitted");
+    // TODO: Implement password change with Supabase
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Settings</h1>
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="animate-fade-in">
+        <div className="flex items-center gap-2 mb-2">
+          <Settings className="h-7 w-7 text-blue-500" />
+          <h1 className="text-3xl font-bold text-text-900">Settings</h1>
+        </div>
         <p className="text-gray-600">Manage your account preferences</p>
       </div>
 
       {/* Security Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Security</CardTitle>
-          <CardDescription>Manage your password and security settings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordChange} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="current-password">Current Password</Label>
-              <Input
-                id="current-password"
-                type="password"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <Input
-                id="new-password"
-                type="password"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <Button type="submit">Change Password</Button>
-          </form>
-
-          <div className="mt-6 pt-6 border-t">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Two-Factor Authentication</p>
-                <p className="text-sm text-muted-foreground">
-                  Add an extra layer of security to your account
-                </p>
-              </div>
-              <Button variant="outline">
-                {/* TODO: Implement 2FA */}
-                Enable 2FA
-              </Button>
-            </div>
+      <GlassCard className="animate-fade-in animation-delay-500">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Lock className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Security</GlassCardTitle>
           </div>
-        </CardContent>
-      </Card>
+          <p className="text-gray-600 mt-1">Update your password</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <form onSubmit={handlePasswordChange} className="space-y-5">
+            <GlassInput
+              label="Current Password"
+              id="currentPassword"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+            <GlassInput
+              label="New Password"
+              id="newPassword"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+            <GlassInput
+              label="Confirm New Password"
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+            <GlassButton type="submit" variant="primary">
+              Change Password
+            </GlassButton>
+          </form>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Notification Preferences */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Notification Preferences</CardTitle>
-          <CardDescription>Choose what notifications you want to receive</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Email Notifications</p>
-              <p className="text-sm text-muted-foreground">
-                Receive updates about your investments via email
-              </p>
-            </div>
-            <Switch defaultChecked />
+      <GlassCard className="animate-fade-in animation-delay-1000">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Bell className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Notification Preferences</GlassCardTitle>
           </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Investment Updates</p>
-              <p className="text-sm text-muted-foreground">
-                Get notified when campaigns you invested in post updates
-              </p>
+          <p className="text-gray-600 mt-1">Choose how you want to be notified</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass">
+              <div>
+                <h4 className="font-semibold text-text-900">Email Notifications</h4>
+                <p className="text-sm text-gray-600">Receive updates via email</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={(e) => setEmailNotifications(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
             </div>
-            <Switch defaultChecked />
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Profit Share Alerts</p>
-              <p className="text-sm text-muted-foreground">
-                Receive alerts when you receive profit shares
-              </p>
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass">
+              <div>
+                <h4 className="font-semibold text-text-900">SMS Notifications</h4>
+                <p className="text-sm text-gray-600">Receive updates via SMS</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={smsNotifications}
+                  onChange={(e) => setSmsNotifications(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
             </div>
-            <Switch defaultChecked />
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">New Campaign Alerts</p>
-              <p className="text-sm text-muted-foreground">
-                Get notified about new investment opportunities
-              </p>
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass">
+              <div>
+                <h4 className="font-semibold text-text-900">Investment Updates</h4>
+                <p className="text-sm text-gray-600">Get notified about portfolio changes</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={investmentUpdates}
+                  onChange={(e) => setInvestmentUpdates(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+              </label>
             </div>
-            <Switch />
           </div>
+        </GlassCardContent>
+      </GlassCard>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Marketing Communications</p>
-              <p className="text-sm text-muted-foreground">
-                Receive newsletters and promotional content
-              </p>
-            </div>
-            <Switch />
+      {/* Data & Privacy */}
+      <GlassCard className="animate-fade-in animation-delay-1500">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Download className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Data & Privacy</GlassCardTitle>
           </div>
-
-          <Button variant="outline">
-            {/* TODO: Save notification preferences to Supabase */}
-            Save Preferences
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Account Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Actions</CardTitle>
-          <CardDescription>Manage your account status</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <p className="font-medium">Download Your Data</p>
-              <p className="text-sm text-muted-foreground">
-                Export all your investment data and account information
-              </p>
-            </div>
-            <Button variant="outline">
-              {/* TODO: Implement data export */}
-              Download
-            </Button>
+          <p className="text-gray-600 mt-1">Manage your data</p>
+        </GlassCardHeader>
+        <GlassCardContent>
+          <div className="space-y-3">
+            <GlassButton variant="secondary" className="w-full justify-start">
+              <Download className="mr-2 h-4 w-4" />
+              Download My Data
+            </GlassButton>
+            <GlassButton variant="ghost" className="w-full justify-start text-red-600 hover:bg-red-50">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Deactivate Account
+            </GlassButton>
           </div>
-
-          <div className="flex items-center justify-between p-4 border border-destructive rounded-lg">
-            <div>
-              <p className="font-medium text-destructive">Deactivate Account</p>
-              <p className="text-sm text-muted-foreground">
-                Temporarily disable your account
-              </p>
-            </div>
-            <Button variant="destructive" onClick={handleDeactivate}>
-              Deactivate
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
     </div>
   );
 }
-

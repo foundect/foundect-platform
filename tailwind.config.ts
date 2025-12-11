@@ -10,14 +10,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Liquid Glass Design System
+        blue: {
+          50: "#EAF3FF",
+          100: "#DCEBFF",
+          200: "#C8DBF5",
+          500: "#0E73F9",
+        },
+        accent: {
+          1: "#8AB6FF",
+        },
+        text: {
+          900: "#0f1720",
+        },
+        glass: {
+          white: "rgba(255, 255, 255, 0.55)",
+          bg: "rgba(255, 255, 255, 0.08)",
+          border: "rgba(255, 255, 255, 0.18)",
+        },
+        // Legacy colors for compatibility
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#0E73F9",
+          foreground: "#ffffff",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -45,9 +64,50 @@ const config: Config = {
         },
       },
       borderRadius: {
+        glass: "12px",
+        card: "20px",
+        pill: "999px",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        glass: "0 8px 24px rgba(0, 0, 0, 0.08)",
+        "glass-lg": "0 12px 32px rgba(0, 0, 0, 0.12)",
+        glow: "0 0 20px rgba(14, 115, 249, 0.3)",
+      },
+      backdropBlur: {
+        glass: "18px",
+      },
+      transitionDuration: {
+        250: "250ms",
+      },
+      transitionTimingFunction: {
+        glass: "cubic-bezier(.17,.67,.83,.67)",
+      },
+      animation: {
+        "float": "float 3s ease-in-out infinite",
+        "glow": "glow 2s ease-in-out infinite",
+        "slide-in-right": "slide-in-right 0.3s ease-out",
+        "slide-out-right": "slide-out-right 0.3s ease-in",
+      },
+      keyframes: {
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        glow: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
+        "slide-in-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-out-right": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
     },
   },

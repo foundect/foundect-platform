@@ -1,185 +1,124 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { TrendingUp, List, ArrowRight, DollarSign, Users } from "lucide-react";
+import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { StatCard } from "@/components/ui/StatCard";
+import { Building2, TrendingUp, Users, DollarSign, Sparkles, ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
 
 export default function BusinessHomePage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Welcome back, Green Textile Manufacturing</h1>
-        <p className="text-gray-600">Manage your funding campaigns and business profile</p>
+    <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="animate-fade-in">
+        <div className="flex items-center gap-2 mb-2">
+          <h1 className="text-3xl font-bold text-text-900">Welcome back, Business Name</h1>
+          <Sparkles className="h-6 w-6 text-accent-1" />
+        </div>
+        <p className="text-gray-600">Manage your funding campaigns and track progress</p>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Funds Raised</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">৳32,00,000</div>
-            <p className="text-xs text-muted-foreground">
-              From 2 campaigns
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid md:grid-cols-3 gap-6 animate-fade-in animation-delay-500">
+        <StatCard
+          title="Active Listings"
+          value="2"
+          subtitle="Currently fundraising"
+          icon={<Building2 className="h-5 w-5" />}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
-            <List className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground">
-              Currently live
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Funds Raised"
+          value="৳5,50,000"
+          subtitle="Across all campaigns"
+          icon={<DollarSign className="h-5 w-5" />}
+          valueColor="text-green-600"
+          trend="+25%"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Investors</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">127</div>
-            <p className="text-xs text-muted-foreground">
-              Supporting your business
-            </p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Investors"
+          value="48"
+          subtitle="Supporting your business"
+          icon={<Users className="h-5 w-5" />}
+        />
       </div>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Manage your business on Foundect</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <h3 className="font-medium">Create New Listing</h3>
-              <p className="text-sm text-muted-foreground">
-                Start a new funding campaign for your business
-              </p>
-            </div>
-            <Button>
-              {/* TODO: Implement create listing flow */}
-              Create <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <h3 className="font-medium">View Your Listings</h3>
-              <p className="text-sm text-muted-foreground">
-                Manage and update your active campaigns
-              </p>
-            </div>
-            <Link href="/business/listings">
-              <Button variant="outline">
-                View Listings <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <h3 className="font-medium">Update Company Profile</h3>
-              <p className="text-sm text-muted-foreground">
-                Keep your business information up to date
-              </p>
-            </div>
-            <Link href="/business/company">
-              <Button variant="outline">
-                Company Profile <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Campaign Performance */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Campaign Performance</CardTitle>
-          <CardDescription>Overview of your active campaigns</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg">
+      <GlassCard className="animate-fade-in animation-delay-1000">
+        <GlassCardHeader>
+          <GlassCardTitle className="text-xl">Quick Actions</GlassCardTitle>
+          <p className="text-gray-600">Manage your campaigns</p>
+        </GlassCardHeader>
+        <GlassCardContent className="space-y-3">
+          <Link href="/business/listings">
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
               <div className="flex-1">
-                <h3 className="font-medium mb-1">Green Textile Manufacturing - Expansion</h3>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>Target: ৳50,00,000</span>
-                  <span>Raised: ৳32,00,000</span>
-                  <span className="text-green-600 font-medium">64% funded</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div className="bg-primary rounded-full h-2" style={{ width: "64%" }} />
-                </div>
+                <h3 className="font-semibold text-text-900 mb-1">Create New Listing</h3>
+                <p className="text-sm text-gray-600">
+                  Start a new funding campaign for your business
+                </p>
               </div>
-              <Button variant="outline" size="sm">
-                View Details
-              </Button>
+              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
             </div>
+          </Link>
 
-            <div className="flex items-center justify-between p-4 border rounded-lg">
+          <Link href="/business/listings">
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
               <div className="flex-1">
-                <h3 className="font-medium mb-1">Sustainable Product Line Launch</h3>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span>Target: ৳30,00,000</span>
-                  <span>Raised: ৳8,50,000</span>
-                  <span className="text-yellow-600 font-medium">28% funded</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div className="bg-primary rounded-full h-2" style={{ width: "28%" }} />
-                </div>
+                <h3 className="font-semibold text-text-900 mb-1">View All Listings</h3>
+                <p className="text-sm text-gray-600">
+                  Manage your active and completed campaigns
+                </p>
               </div>
-              <Button variant="outline" size="sm">
-                View Details
-              </Button>
+              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </Link>
+
+          <Link href="/business/company">
+            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
+              <div className="flex-1">
+                <h3 className="font-semibold text-text-900 mb-1">Update Company Profile</h3>
+                <p className="text-sm text-gray-600">
+                  Keep your business information up to date
+                </p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+        </GlassCardContent>
+      </GlassCard>
 
       {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <GlassCard className="animate-fade-in animation-delay-1500">
+        <GlassCardHeader>
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-blue-500" />
+            <GlassCardTitle className="text-xl">Recent Activity</GlassCardTitle>
+          </div>
+        </GlassCardHeader>
+        <GlassCardContent>
           <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b">
-              <div>
-                <p className="font-medium text-sm">New investment received</p>
-                <p className="text-xs text-muted-foreground">Ahmed R. invested in your campaign</p>
+            <div className="flex items-center justify-between py-3 glass-bg rounded-glass px-4">
+              <div className="flex-1">
+                <p className="font-medium text-sm text-text-900">New investment received</p>
+                <p className="text-xs text-gray-500 mt-1">Green Textile Manufacturing - 1 hour ago</p>
               </div>
-              <span className="text-sm font-medium text-green-600">+৳25,000</span>
+              <span className="text-sm font-semibold text-green-600">+৳25,000</span>
             </div>
-            <div className="flex items-center justify-between py-2 border-b">
-              <div>
-                <p className="font-medium text-sm">Campaign milestone reached</p>
-                <p className="text-xs text-muted-foreground">Your campaign reached 50% funding</p>
+            <div className="flex items-center justify-between py-3 glass-bg rounded-glass px-4">
+              <div className="flex-1">
+                <p className="font-medium text-sm text-text-900">Campaign milestone reached</p>
+                <p className="text-xs text-gray-500 mt-1">50% funding goal achieved - 2 days ago</p>
               </div>
-              <span className="text-xs text-muted-foreground">2 days ago</span>
+              <span className="text-sm font-semibold text-blue-500">50%</span>
             </div>
-            <div className="flex items-center justify-between py-2">
-              <div>
-                <p className="font-medium text-sm">Update posted</p>
-                <p className="text-xs text-muted-foreground">Q4 progress report shared with investors</p>
+            <div className="flex items-center justify-between py-3 glass-bg rounded-glass px-4">
+              <div className="flex-1">
+                <p className="font-medium text-sm text-text-900">New investor joined</p>
+                <p className="text-xs text-gray-500 mt-1">Sustainable Packaging Solutions - 3 days ago</p>
               </div>
-              <span className="text-xs text-muted-foreground">5 days ago</span>
+              <span className="text-sm font-semibold text-blue-500">+1</span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </GlassCardContent>
+      </GlassCard>
     </div>
   );
 }
-
