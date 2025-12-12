@@ -3,16 +3,13 @@
 import { useState } from "react";
 import { PublicHeader } from "@/components/layouts/PublicHeader";
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
 import { GlassInput } from "@/components/ui/GlassInput";
 import { GlassTextarea } from "@/components/ui/GlassTextarea";
 import { GlassSelect } from "@/components/ui/GlassSelect";
-import { GlassNavBar } from "@/components/ui/GlassNavBar";
-import { AIChatDrawer } from "@/components/ui/AIChatDrawer";
 import { Mail, MessageSquare, Phone, Send, MapPin, Clock } from "lucide-react";
 
 export default function ContactPage() {
-  const [aiDrawerOpen, setAIDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -125,16 +122,16 @@ export default function ContactPage() {
                   required
                 />
 
-                <GlassButton 
+                <LiquidGlassButton 
                   type="submit" 
                   variant="primary" 
-                  size="lg" 
+                  size="default" 
                   className="w-full"
-                  loading={loading}
-                  icon={<Send className="h-5 w-5" />}
+                  disabled={loading}
                 >
                   {loading ? "Sending..." : "Send Message"}
-                </GlassButton>
+                  {!loading && <Send className="h-5 w-5 ml-2" />}
+                </LiquidGlassButton>
 
                 <p className="text-xs text-center text-gray-500">
                   We typically respond within 24 hours during business days.
@@ -173,11 +170,6 @@ export default function ContactPage() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      <GlassNavBar onAIClick={() => setAIDrawerOpen(true)} />
-      
-      {/* AI Chat Drawer */}
-      <AIChatDrawer open={aiDrawerOpen} onClose={() => setAIDrawerOpen(false)} />
     </div>
   );
 }

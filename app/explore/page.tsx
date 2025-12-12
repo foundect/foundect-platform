@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { PublicHeader } from "@/components/layouts/PublicHeader";
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent, GlassCardFooter } from "@/components/ui/GlassCard";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { GlassInput } from "@/components/ui/GlassInput";
-import { GlassNavBar } from "@/components/ui/GlassNavBar";
-import { AIChatDrawer } from "@/components/ui/AIChatDrawer";
 import { Badge } from "@/components/ui/badge";
 import { Building2, TrendingUp, Filter, Search, Clock } from "lucide-react";
 
@@ -75,7 +74,6 @@ const campaigns = [
 ];
 
 export default function ExplorePage() {
-  const [aiDrawerOpen, setAIDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSector, setSelectedSector] = useState("All");
 
@@ -101,7 +99,7 @@ export default function ExplorePage() {
   const sectors = ["All", "Textile", "Agriculture", "Technology", "Food & Beverage", "Manufacturing"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#e8f2ff]/70 via-[#f7fbff]/40 to-[#e8f2ff]/70 relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl -z-10" />
       
@@ -204,14 +202,25 @@ export default function ExplorePage() {
               </GlassCardContent>
 
               <GlassCardFooter>
-                <GlassButton
-                  variant={campaign.status === "Open" ? "primary" : "ghost"}
-                  className="w-full"
-                  disabled={campaign.status !== "Open"}
-                  onClick={() => console.log(`View campaign ${campaign.id}`)}
-                >
-                  {campaign.status === "Open" ? "View Details" : campaign.status}
-                </GlassButton>
+                {campaign.status === "Open" ? (
+                  <LiquidGlassButton
+                    variant="primary"
+                    size="default"
+                    className="w-full"
+                    onClick={() => console.log(`View campaign ${campaign.id}`)}
+                  >
+                    Invest Now
+                  </LiquidGlassButton>
+                ) : (
+                  <HoverButton
+                    variant="ghost"
+                    size="default"
+                    className="w-full"
+                    disabled
+                  >
+                    {campaign.status}
+                  </HoverButton>
+                )}
               </GlassCardFooter>
             </GlassCard>
           ))}
@@ -229,11 +238,6 @@ export default function ExplorePage() {
         )}
       </div>
 
-      {/* Mobile Navigation */}
-      <GlassNavBar onAIClick={() => setAIDrawerOpen(true)} />
-      
-      {/* AI Chat Drawer */}
-      <AIChatDrawer open={aiDrawerOpen} onClose={() => setAIDrawerOpen(false)} />
     </div>
   );
 }

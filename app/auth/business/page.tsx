@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
 import { GlassInput } from "@/components/ui/GlassInput";
 import { GlassSelect } from "@/components/ui/GlassSelect";
 import { GlassTextarea } from "@/components/ui/GlassTextarea";
@@ -237,40 +237,40 @@ export default function BusinessSignupPage() {
             {/* Navigation Buttons */}
             <div className="flex gap-3 pt-4">
               {step > 1 ? (
-                <GlassButton
+                <LiquidGlassButton
                   type="button"
-                  variant="ghost"
-                  size="lg"
+                  variant="secondary"
+                  size="default"
                   onClick={() => setStep(step - 1)}
-                  icon={<ArrowLeft className="h-5 w-5" />}
                   className="flex-1"
                 >
+                  <ArrowLeft className="h-5 w-5 mr-2" />
                   Back
-                </GlassButton>
+                </LiquidGlassButton>
               ) : (
                 <Link href="/auth" className="flex-1">
-                  <GlassButton
+                  <LiquidGlassButton
                     type="button"
-                    variant="ghost"
-                    size="lg"
-                    icon={<ArrowLeft className="h-5 w-5" />}
+                    variant="secondary"
+                    size="default"
                     className="w-full"
                   >
+                    <ArrowLeft className="h-5 w-5 mr-2" />
                     Back
-                  </GlassButton>
+                  </LiquidGlassButton>
                 </Link>
               )}
 
-              <GlassButton
+              <LiquidGlassButton
                 type="submit"
                 variant="primary"
-                size="lg"
+                size="default"
                 className="flex-1"
-                loading={isLoading}
-                icon={step === 3 ? <CheckCircle className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />}
+                disabled={isLoading}
               >
                 {isLoading ? "Creating Account..." : step === 3 ? "Create Account" : "Continue"}
-              </GlassButton>
+                {!isLoading && (step === 3 ? <CheckCircle className="h-5 w-5 ml-2" /> : <ArrowRight className="h-5 w-5 ml-2" />)}
+              </LiquidGlassButton>
             </div>
 
             <p className="text-xs text-center text-gray-500 mt-4">
@@ -285,4 +285,6 @@ export default function BusinessSignupPage() {
     </div>
   );
 }
+
+
 

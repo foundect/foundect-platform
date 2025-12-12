@@ -3,18 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layouts/PublicHeader";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { GlassTile } from "@/components/ui/GlassTile";
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
-import { GlassNavBar } from "@/components/ui/GlassNavBar";
-import { AIChatDrawer } from "@/components/ui/AIChatDrawer";
 import { ArrowRight, Building2, TrendingUp, Shield, Users, Sparkles, CheckCircle } from "lucide-react";
 
 export default function BangladeshLandingPage() {
-  const [aiDrawerOpen, setAIDrawerOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#e8f2ff]/70 via-[#f7fbff]/40 to-[#e8f2ff]/70 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent-1/20 rounded-full blur-3xl -z-10" />
@@ -29,7 +27,7 @@ export default function BangladeshLandingPage() {
             <span className="text-sm font-medium text-text-900">Bangladesh's First Halal Investment Platform</span>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-500 via-accent-1 to-blue-500 bg-clip-text text-transparent leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-blue-500 to-accent-1 bg-clip-text text-transparent leading-tight">
             Halal SME Investing for Everyone in Bangladesh
           </h1>
           
@@ -38,16 +36,12 @@ export default function BangladeshLandingPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link href="/auth">
-              <GlassButton variant="primary" size="lg" icon={<ArrowRight />} className="w-full sm:w-auto min-w-[200px]">
-                Start Investing
-              </GlassButton>
-            </Link>
-            <Link href="/explore">
-              <GlassButton variant="secondary" size="lg" className="w-full sm:w-auto min-w-[200px]">
-                Explore Campaigns
-              </GlassButton>
-            </Link>
+            <LiquidGlassButton variant="primary" size="default" className="w-full sm:w-auto min-w-[200px]">
+              Start Investing
+            </LiquidGlassButton>
+            <HoverButton variant="default" size="default" className="w-full sm:w-auto min-w-[200px]">
+              Explore Campaigns
+            </HoverButton>
           </div>
 
           {/* Trust Indicators */}
@@ -136,9 +130,10 @@ export default function BangladeshLandingPage() {
                 </div>
                 
                 <Link href="/auth">
-                  <GlassButton variant="primary" size="lg" icon={<ArrowRight />} className="w-full sm:w-auto">
+                  <LiquidGlassButton variant="primary" size="default" className="w-full sm:w-auto">
                     Start as Investor
-                  </GlassButton>
+                    <ArrowRight className="h-5 w-5 ml-2" />
+                  </LiquidGlassButton>
                 </Link>
               </GlassCard>
             </div>
@@ -196,9 +191,10 @@ export default function BangladeshLandingPage() {
                 </div>
                 
                 <Link href="/auth">
-                  <GlassButton variant="primary" size="lg" icon={<ArrowRight />} className="w-full sm:w-auto">
+                  <LiquidGlassButton variant="primary" size="default" className="w-full sm:w-auto">
                     List Your Business
-                  </GlassButton>
+                    <ArrowRight className="h-5 w-5 ml-2" />
+                  </LiquidGlassButton>
                 </Link>
               </GlassCard>
             </div>
@@ -220,14 +216,15 @@ export default function BangladeshLandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/auth">
-                  <GlassButton variant="primary" size="lg" icon={<ArrowRight />} className="w-full sm:w-auto">
+                  <LiquidGlassButton variant="primary" size="default" className="w-full sm:w-auto">
                     Get Started Now
-                  </GlassButton>
+                    <ArrowRight className="h-5 w-5 ml-2" />
+                  </LiquidGlassButton>
                 </Link>
                 <Link href="/explore">
-                  <GlassButton variant="secondary" size="lg" className="w-full sm:w-auto">
+                  <HoverButton variant="default" size="default" className="w-full sm:w-auto">
                     Explore Opportunities
-                  </GlassButton>
+                  </HoverButton>
                 </Link>
               </div>
             </div>
@@ -304,11 +301,6 @@ export default function BangladeshLandingPage() {
         </div>
       </footer>
 
-      {/* Mobile Navigation */}
-      <GlassNavBar onAIClick={() => setAIDrawerOpen(true)} />
-      
-      {/* AI Chat Drawer */}
-      <AIChatDrawer open={aiDrawerOpen} onClose={() => setAIDrawerOpen(false)} />
     </div>
   );
 }

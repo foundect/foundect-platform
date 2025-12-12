@@ -2,7 +2,8 @@
 
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
 import { GlassInput } from "@/components/ui/GlassInput";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { User, Mail, Phone, MapPin, CreditCard, Shield, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function InvestorAccountPage() {
@@ -96,9 +97,9 @@ export default function InvestorAccountPage() {
               />
             </div>
 
-            <GlassButton type="submit" variant="primary" size="lg">
+            <LiquidGlassButton type="submit" variant="primary" size="default">
               Save Changes
-            </GlassButton>
+            </LiquidGlassButton>
           </form>
         </GlassCardContent>
       </GlassCard>
@@ -118,9 +119,9 @@ export default function InvestorAccountPage() {
               <p className="text-sm text-gray-700 mb-3">
                 <strong>Note:</strong> KYC verification is required to invest more than ৳50,000 per campaign.
               </p>
-              <GlassButton variant="secondary">
+              <HoverButton variant="default">
                 Upload KYC Documents
-              </GlassButton>
+              </HoverButton>
             </div>
           </div>
         </GlassCardContent>
@@ -168,12 +169,12 @@ export default function InvestorAccountPage() {
             </div>
 
             <div className="flex gap-3">
-              <GlassButton type="submit" variant="primary">
+              <LiquidGlassButton type="submit" variant="primary" size="default">
                 Save Bank Details
-              </GlassButton>
-              <GlassButton type="button" variant="ghost">
+              </LiquidGlassButton>
+              <HoverButton type="button" variant="ghost" size="default">
                 Skip for Now
-              </GlassButton>
+              </HoverButton>
             </div>
           </form>
         </GlassCardContent>

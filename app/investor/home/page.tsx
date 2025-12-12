@@ -1,7 +1,11 @@
+"use client";
+
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { HoverButton } from "@/components/ui/hover-button";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
+import { Tile } from "@/components/ui/tile";
 import { StatCard } from "@/components/ui/StatCard";
-import { TrendingUp, Briefcase, ArrowRight, DollarSign, Sparkles, Clock } from "lucide-react";
+import { TrendingUp, Briefcase, ArrowRight, DollarSign, Sparkles, Clock, Compass, User } from "lucide-react";
 import Link from "next/link";
 
 export default function InvestorHomePage() {
@@ -9,10 +13,10 @@ export default function InvestorHomePage() {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="animate-fade-in">
         <div className="flex items-center gap-2 mb-2">
-          <h1 className="text-3xl font-bold text-text-900">Welcome back, Investor</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900">Welcome back, Investor</h1>
           <Sparkles className="h-6 w-6 text-accent-1" />
         </div>
-        <p className="text-gray-600">Here's an overview of your investment portfolio</p>
+        <p className="text-slate-600 text-lg">Here's an overview of your investment portfolio</p>
       </div>
 
       {/* Summary Cards */}
@@ -41,50 +45,47 @@ export default function InvestorHomePage() {
         />
       </div>
 
-      {/* Quick Actions */}
-      <GlassCard className="animate-fade-in animation-delay-1000">
-        <GlassCardHeader>
-          <GlassCardTitle className="text-xl">Next Steps</GlassCardTitle>
-          <p className="text-gray-600">Grow your halal investment portfolio</p>
-        </GlassCardHeader>
-        <GlassCardContent className="space-y-3">
-          <Link href="/explore">
-            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
-              <div className="flex-1">
-                <h3 className="font-semibold text-text-900 mb-1">Explore New Campaigns</h3>
-                <p className="text-sm text-gray-600">
-                  Discover new Shari'ah-compliant investment opportunities
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
+      {/* Quick Actions - Using Tiles */}
+      <div className="grid md:grid-cols-3 gap-6 animate-fade-in animation-delay-1000">
+        <Link href="/explore">
+          <Tile
+            icon={Compass}
+            title="Explore Campaigns"
+            description="Discover new Shari'ah-compliant investment opportunities"
+            href="/explore"
+          />
+        </Link>
+        <Link href="/investor/dashboard">
+          <Tile
+            icon={TrendingUp}
+            title="View Dashboard"
+            description="Track your investments and portfolio performance"
+            href="/investor/dashboard"
+          />
+        </Link>
+        <Link href="/investor/account">
+          <Tile
+            icon={User}
+            title="Complete Profile"
+            description="Add KYC information to increase investment limits"
+            href="/investor/account"
+          />
+        </Link>
+      </div>
 
-          <Link href="/investor/dashboard">
-            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
-              <div className="flex-1">
-                <h3 className="font-semibold text-text-900 mb-1">View Your Dashboard</h3>
-                <p className="text-sm text-gray-600">
-                  Track your investments and portfolio performance
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-
-          <Link href="/investor/account">
-            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
-              <div className="flex-1">
-                <h3 className="font-semibold text-text-900 mb-1">Complete Your Profile</h3>
-                <p className="text-sm text-gray-600">
-                  Add KYC information to increase investment limits
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-        </GlassCardContent>
-      </GlassCard>
+      {/* Main CTA */}
+      <div className="flex justify-center gap-4 animate-fade-in animation-delay-1200">
+        <Link href="/explore">
+          <LiquidGlassButton variant="primary" size="default">
+            Start Investing Now
+          </LiquidGlassButton>
+        </Link>
+        <Link href="/investor/dashboard">
+          <HoverButton variant="outline" size="default">
+            View Dashboard
+          </HoverButton>
+        </Link>
+      </div>
 
       {/* Recent Activity */}
       <GlassCard className="animate-fade-in animation-delay-1500">

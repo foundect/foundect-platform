@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
 import { GlassInput } from "@/components/ui/GlassInput";
 import { Building2, User, ArrowRight, Shield, Sparkles } from "lucide-react";
 
@@ -26,24 +26,25 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
-      {/* Left Side - Auth Form */}
-      <GlassCard className="p-8 md:p-10">
-        <GlassCardHeader>
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="h-6 w-6 text-blue-500" />
-            <GlassCardTitle className="text-2xl">
-              {activeTab === "login" ? "Welcome Back" : "Get Started"}
-            </GlassCardTitle>
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-8">
+      <div className="w-full max-w-6xl grid md:grid-cols-2 gap-8 items-center">
+        {/* Left Side - Auth Form */}
+        <div className="rounded-3xl bg-white/30 backdrop-blur-2xl border border-white/40 shadow-xl p-8 md:p-10">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="h-6 w-6 text-blue-500" />
+              <h2 className="text-2xl font-bold text-slate-900">
+                {activeTab === "login" ? "Welcome Back" : "Get Started"}
+              </h2>
+            </div>
+            <p className="text-gray-600">
+              {activeTab === "login" 
+                ? "Sign in to your Foundect account" 
+                : "Choose your account type to begin"}
+            </p>
           </div>
-          <p className="text-gray-600">
-            {activeTab === "login" 
-              ? "Sign in to your Foundect account" 
-              : "Choose your account type to begin"}
-          </p>
-        </GlassCardHeader>
 
-        <GlassCardContent>
+          <div>
           {/* Tab Switcher */}
           <div className="flex gap-2 mb-8 glass-bg rounded-pill p-1">
             <button
@@ -71,20 +72,30 @@ export default function AuthPage() {
           {/* Login Form */}
           {activeTab === "login" && (
             <form onSubmit={handleLogin} className="space-y-5 animate-fade-in">
-              <GlassInput
-                label="Email"
-                id="login-email"
-                type="email"
-                placeholder="your@email.com"
-                required
-              />
-              <GlassInput
-                label="Password"
-                id="login-password"
-                type="password"
-                placeholder="••••••••"
-                required
-              />
+              <div className="space-y-2">
+                <label htmlFor="login-email" className="text-sm font-medium text-slate-900">
+                  Email
+                </label>
+                <input
+                  id="login-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  required
+                  className="w-full bg-white/40 border border-white/20 shadow-inner rounded-xl px-4 py-3 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="login-password" className="text-sm font-medium text-slate-900">
+                  Password
+                </label>
+                <input
+                  id="login-password"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                  className="w-full bg-white/40 border border-white/20 shadow-inner rounded-xl px-4 py-3 text-slate-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
               
               <div className="flex justify-end">
                 <Link href="#" className="text-sm text-blue-500 hover:text-blue-600">
@@ -92,16 +103,15 @@ export default function AuthPage() {
                 </Link>
               </div>
 
-              <GlassButton
+              <LiquidGlassButton
                 type="submit"
-                variant="primary"
-                size="lg"
+                variant="default"
+                size="default"
                 className="w-full"
-                loading={isLoading}
-                icon={<ArrowRight className="h-5 w-5" />}
+                disabled={isLoading}
               >
                 {isLoading ? "Logging in..." : "Login"}
-              </GlassButton>
+              </LiquidGlassButton>
 
               <p className="text-xs text-center text-gray-500">
                 Don't have an account?{" "}
@@ -169,11 +179,12 @@ export default function AuthPage() {
               </p>
             </div>
           )}
-        </GlassCardContent>
-      </GlassCard>
+          </div>
+        </div>
 
       {/* Right Side - Decorative/Info */}
-      <div className="hidden md:block">
+      <div className="hidden md:block relative">
+        <div className="rounded-3xl bg-gradient-to-br from-blue-500/20 via-accent-1/20 to-blue-500/20 backdrop-blur-2xl border border-white/30 p-8 h-full min-h-[500px] flex flex-col justify-center">
         <div className="space-y-6">
           <div className="animate-fade-in">
             <span className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-pill glass-bg border border-white/30 text-sm font-medium text-blue-500">
@@ -220,6 +231,8 @@ export default function AuthPage() {
             </div>
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </div>
   );

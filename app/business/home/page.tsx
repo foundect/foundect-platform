@@ -1,6 +1,11 @@
+"use client";
+
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
+import { ShinyButton } from "@/components/ui/shiny-button";
+import { HoverButton } from "@/components/ui/hover-button";
+import { Tile } from "@/components/ui/tile";
 import { StatCard } from "@/components/ui/StatCard";
-import { Building2, TrendingUp, Users, DollarSign, Sparkles, ArrowRight, Clock } from "lucide-react";
+import { Building2, TrendingUp, Users, DollarSign, Sparkles, ArrowRight, Clock, Plus, FileText } from "lucide-react";
 import Link from "next/link";
 
 export default function BusinessHomePage() {
@@ -40,50 +45,48 @@ export default function BusinessHomePage() {
         />
       </div>
 
-      {/* Quick Actions */}
-      <GlassCard className="animate-fade-in animation-delay-1000">
-        <GlassCardHeader>
-          <GlassCardTitle className="text-xl">Quick Actions</GlassCardTitle>
-          <p className="text-gray-600">Manage your campaigns</p>
-        </GlassCardHeader>
-        <GlassCardContent className="space-y-3">
-          <Link href="/business/listings">
-            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
-              <div className="flex-1">
-                <h3 className="font-semibold text-text-900 mb-1">Create New Listing</h3>
-                <p className="text-sm text-gray-600">
-                  Start a new funding campaign for your business
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
+      {/* Quick Actions - Using Tiles */}
+      <div className="grid md:grid-cols-3 gap-6 animate-fade-in animation-delay-1000">
+        <Link href="/business/listings">
+          <Tile
+            icon={Plus}
+            title="Create Listing"
+            description="Start a new funding campaign for your business"
+            href="/business/listings"
+            badge="NEW"
+          />
+        </Link>
+        <Link href="/business/listings">
+          <Tile
+            icon={FileText}
+            title="View Listings"
+            description="Manage your active and completed campaigns"
+            href="/business/listings"
+          />
+        </Link>
+        <Link href="/business/company">
+          <Tile
+            icon={Building2}
+            title="Company Profile"
+            description="Keep your business information up to date"
+            href="/business/company"
+          />
+        </Link>
+      </div>
 
-          <Link href="/business/listings">
-            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
-              <div className="flex-1">
-                <h3 className="font-semibold text-text-900 mb-1">View All Listings</h3>
-                <p className="text-sm text-gray-600">
-                  Manage your active and completed campaigns
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-
-          <Link href="/business/company">
-            <div className="flex items-center justify-between p-4 glass-bg rounded-glass hover:scale-[1.02] transition-transform cursor-pointer group">
-              <div className="flex-1">
-                <h3 className="font-semibold text-text-900 mb-1">Update Company Profile</h3>
-                <p className="text-sm text-gray-600">
-                  Keep your business information up to date
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 text-blue-500 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-        </GlassCardContent>
-      </GlassCard>
+      {/* Main CTA */}
+      <div className="flex justify-center gap-4 animate-fade-in animation-delay-1200">
+        <Link href="/business/listings">
+          <ShinyButton variant="premium" size="default">
+            Apply for Funding
+          </ShinyButton>
+        </Link>
+        <Link href="/business/listings">
+          <HoverButton variant="outline" size="default">
+            View Listings
+          </HoverButton>
+        </Link>
+      </div>
 
       {/* Recent Activity */}
       <GlassCard className="animate-fade-in animation-delay-1500">

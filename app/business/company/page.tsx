@@ -4,7 +4,8 @@ import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/
 import { GlassInput } from "@/components/ui/GlassInput";
 import { GlassTextarea } from "@/components/ui/GlassTextarea";
 import { GlassSelect } from "@/components/ui/GlassSelect";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { Building2, Globe, MapPin, FileText } from "lucide-react";
 
 export default function BusinessCompanyPage() {
@@ -105,9 +106,9 @@ export default function BusinessCompanyPage() {
               defaultValue="123 Industrial Area, Dhaka, Bangladesh"
             />
 
-            <GlassButton type="submit" variant="primary" size="lg">
+            <LiquidGlassButton type="submit" variant="primary" size="default">
               Save Company Profile
-            </GlassButton>
+            </LiquidGlassButton>
           </form>
         </GlassCardContent>
       </GlassCard>
@@ -126,9 +127,9 @@ export default function BusinessCompanyPage() {
               <p className="text-sm text-gray-700 mb-3">
                 <strong>Required Documents:</strong> Trade license, Company registration certificate, Bank statement
               </p>
-              <GlassButton variant="secondary">
+              <HoverButton variant="default" size="default">
                 Upload Documents
-              </GlassButton>
+              </HoverButton>
             </div>
           </div>
         </GlassCardContent>

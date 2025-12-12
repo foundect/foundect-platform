@@ -1,7 +1,8 @@
 "use client";
 
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { ShinyButton } from "@/components/ui/shiny-button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { List, Plus, Eye, Edit, TrendingUp } from "lucide-react";
 
 const listings = [
@@ -75,9 +76,10 @@ export default function BusinessListingsPage() {
           </div>
           <p className="text-gray-600">Manage your funding campaigns</p>
         </div>
-        <GlassButton variant="primary" icon={<Plus className="h-5 w-5" />}>
+        <ShinyButton variant="premium" size="default">
+          <Plus className="h-5 w-5 mr-2" />
           Create New Listing
-        </GlassButton>
+        </ShinyButton>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -136,13 +138,15 @@ export default function BusinessListingsPage() {
 
               {/* Actions */}
               <div className="flex gap-2">
-                <GlassButton variant="secondary" size="sm" className="flex-1" icon={<Eye className="h-4 w-4" />}>
-                  View
-                </GlassButton>
+                <HoverButton variant="default" size="sm" className="flex-1">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Details
+                </HoverButton>
                 {listing.status !== "Completed" && (
-                  <GlassButton variant="ghost" size="sm" className="flex-1" icon={<Edit className="h-4 w-4" />}>
+                  <HoverButton variant="outline" size="sm" className="flex-1">
+                    <Edit className="h-4 w-4 mr-2" />
                     Edit
-                  </GlassButton>
+                  </HoverButton>
                 )}
               </div>
             </GlassCardContent>

@@ -1,7 +1,8 @@
 "use client";
 
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
-import { GlassButton } from "@/components/ui/GlassButton";
+import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
+import { HoverButton } from "@/components/ui/hover-button";
 import { GlassInput } from "@/components/ui/GlassInput";
 import { Settings, Lock, Bell, Download, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -59,9 +60,9 @@ export default function InvestorSettingsPage() {
               placeholder="••••••••"
               required
             />
-            <GlassButton type="submit" variant="primary">
+            <LiquidGlassButton type="submit" variant="primary" size="default">
               Change Password
-            </GlassButton>
+            </LiquidGlassButton>
           </form>
         </GlassCardContent>
       </GlassCard>
@@ -139,14 +140,14 @@ export default function InvestorSettingsPage() {
         </GlassCardHeader>
         <GlassCardContent>
           <div className="space-y-3">
-            <GlassButton variant="secondary" className="w-full justify-start">
+            <HoverButton variant="default" size="default" className="w-full justify-start">
               <Download className="mr-2 h-4 w-4" />
               Download My Data
-            </GlassButton>
-            <GlassButton variant="ghost" className="w-full justify-start text-red-600 hover:bg-red-50">
+            </HoverButton>
+            <HoverButton variant="ghost" size="default" className="w-full justify-start text-red-600 hover:bg-red-50">
               <Trash2 className="mr-2 h-4 w-4" />
               Deactivate Account
-            </GlassButton>
+            </HoverButton>
           </div>
         </GlassCardContent>
       </GlassCard>
