@@ -7,7 +7,7 @@ import { useState } from "react";
 export default function InvestorHomePage() {
   const [showRiskTooltip, setShowRiskTooltip] = useState<number | null>(null);
 
-  // Dummy data for promising opportunities
+  // Mock data for promising opportunities
   const opportunities = [
     {
       id: 1,
