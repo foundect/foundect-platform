@@ -1,6 +1,6 @@
 "use client";
 
-import { Compass, Wallet, Briefcase, Bell, Info, Sparkles } from "lucide-react";
+import { Compass, LayoutDashboard, Info, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -56,54 +56,30 @@ export default function InvestorHomePage() {
       </div>
 
       {/* ========================================
-          QUICK ACTIONS SECTION
+          QUICK ACTIONS SECTION (ONLY 2 TILES)
       ======================================== */}
       <div className="animate-fade-in animation-delay-300">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 max-w-2xl">
           {/* Explore Opportunities */}
           <Link href="/explore">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all cursor-pointer group">
-              <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Compass className="h-7 w-7 text-white" />
+            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg p-8 border border-white/20 hover:shadow-xl hover:scale-105 transition-all cursor-pointer group">
+              <div className="flex flex-col items-center text-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                  <Compass className="h-8 w-8 text-white" />
                 </div>
-                <span className="font-semibold text-slate-900 text-sm">Explore Opportunities</span>
+                <span className="font-semibold text-slate-900 text-base">Explore Opportunities</span>
               </div>
             </div>
           </Link>
 
-          {/* Withdraw */}
-          <Link href="/investor/withdraw">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all cursor-pointer group">
-              <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Wallet className="h-7 w-7 text-white" />
-                </div>
-                <span className="font-semibold text-slate-900 text-sm">Withdraw</span>
-              </div>
-            </div>
-          </Link>
-
-          {/* Portfolio */}
+          {/* Dashboard */}
           <Link href="/investor/dashboard">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all cursor-pointer group">
-              <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Briefcase className="h-7 w-7 text-white" />
+            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg p-8 border border-white/20 hover:shadow-xl hover:scale-105 transition-all cursor-pointer group">
+              <div className="flex flex-col items-center text-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                  <LayoutDashboard className="h-8 w-8 text-white" />
                 </div>
-                <span className="font-semibold text-slate-900 text-sm">Portfolio</span>
-              </div>
-            </div>
-          </Link>
-
-          {/* Notifications */}
-          <Link href="/investor/notifications">
-            <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg p-6 border border-white/20 hover:shadow-xl transition-all cursor-pointer group">
-              <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Bell className="h-7 w-7 text-white" />
-                </div>
-                <span className="font-semibold text-slate-900 text-sm">Notifications</span>
+                <span className="font-semibold text-slate-900 text-base">Dashboard</span>
               </div>
             </div>
           </Link>
