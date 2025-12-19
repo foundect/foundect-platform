@@ -37,6 +37,41 @@
 │       ├── E-commerce Platform
 │       └── Sustainable Packaging
 │
+├── /campaign/[id]          → Campaign Details Page
+│   ├── Campaign Identity Header
+│   ├── Primary CTA (Invest Now)
+│   ├── Tab-based Content
+│   │   ├── Overview
+│   │   ├── Business
+│   │   ├── Financial
+│   │   ├── Risk
+│   │   ├── Shari'ah
+│   │   └── Legal
+│   ├── AI Assistant
+│   ├── Comments Section
+│   └── Final CTA
+│
+├── /invest/[campaignId]    → Investment Page
+│   ├── Campaign Header
+│   ├── Investment Summary Card
+│   ├── Returns Breakdown Table
+│   ├── Shari'ah Compliance Summary
+│   ├── Business Bank Details
+│   ├── Transfer Confirmation
+│   │   ├── Transaction Reference
+│   │   ├── Screenshot Upload
+│   │   └── Bank Account Selection
+│   ├── Disclaimer & Acknowledgment
+│   └── Submit Investment
+│
+├── /support                → Support Center
+│   ├── Quick Help Cards
+│   ├── Search Bar
+│   ├── FAQ Sections (Accordion)
+│   ├── Contact Options
+│   ├── Support Request Form
+│   └── Trust & Safety Notice
+│
 ├── /about                  → About Foundect
 │   ├── Our Mission
 │   ├── Why Shari'ah-Compliant?
@@ -80,21 +115,34 @@
 │       └── 4 Active Investments
 │
 ├── /investor/account       → My Account
-│   ├── Account Status Badges
-│   ├── Personal Information Form
-│   ├── KYC Information
-│   └── Bank Details
+│   ├── Profile Header (Banner + Avatar)
+│   ├── Verification Status
+│   ├── Personal Information
+│   ├── Profit Withdrawal Destination
+│   ├── Security Settings
+│   └── Logout
+│
+├── /investor/transactions  → Transactions Ledger
+│   ├── Quick Overview (4 cards)
+│   ├── Filters & Search
+│   ├── Transaction List (Table/Cards)
+│   ├── Monthly Grouping
+│   └── Export Options
 │
 ├── /investor/notifications → Notifications
-│   └── 6 Notifications
-│       ├── Investment Successful
-│       ├── Profit Share Received
-│       ├── Campaign Update
-│       ├── KYC Reminder
-│       ├── Campaign Fully Funded
-│       └── New Campaign Available
+│   ├── Grouping (Today, Earlier, This Week)
+│   ├── Contextual Styling
+│   ├── Actionable Links
+│   └── Read/Unread States
 │
 └── /investor/settings      → Settings
+    ├── Security & Access
+    ├── Investment Preferences
+    ├── Notification Preferences
+    ├── Financial Controls
+    ├── Advanced Settings
+    ├── Community & Support
+    └── Account Controls
     ├── Security
     │   ├── Change Password
     │   └── 2FA Setup
@@ -126,6 +174,24 @@
 │   ├── Campaign Performance (2 campaigns)
 │   └── Recent Activity Feed
 │
+├── /business/dashboard     → Business Dashboard
+│   ├── Header with Quick Actions
+│   ├── Key Metrics (4 cards)
+│   ├── Campaign Performance
+│   ├── Profit Overview
+│   ├── Investor Engagement
+│   └── Recent Activity
+│
+├── /business/financials    → Business Financials
+│   ├── Tab: Your Campaign Finances
+│   │   ├── Financial Overview (4 cards)
+│   │   ├── Campaign-wise Breakdown
+│   │   └── Recent Financial Activity
+│   └── Tab: Your Investments
+│       ├── Investment Overview (4 cards)
+│       ├── Active Investments List
+│       └── Recent Investment Activity
+│
 ├── /business/listings      → Manage Campaigns
 │   ├── Summary Stats (4 cards)
 │   └── Campaign List (5 campaigns)
@@ -136,19 +202,13 @@
 │       └── Working Capital Q1 (Completed)
 │
 ├── /business/company       → Company Profile
+│   ├── Company Overview Header
 │   ├── Verification Status
-│   ├── Basic Information
-│   │   ├── Company Name
-│   │   ├── Industry
-│   │   ├── Registration Country
-│   │   └── Description
-│   ├── Contact Information
-│   ├── Business Documents
-│   │   ├── Trade License
-│   │   ├── TIN Certificate
-│   │   ├── Bank Statement
-│   │   └── Shari'ah Compliance Cert
-│   └── Financial Information
+│   ├── Founders Section
+│   ├── Active Campaigns
+│   ├── Past Campaigns
+│   ├── Company Description
+│   └── Company Highlights
 │
 ├── /business/notifications → Notifications
 │   └── 6 Notifications
@@ -159,16 +219,14 @@
 │       ├── New Investor Question
 │       └── Document Expiring
 │
-└── /business/settings      → Settings
-    ├── Security
-    │   ├── Change Password
-    │   └── 2FA Setup
-    ├── Team Access (Coming Soon)
-    ├── Notification Preferences (6 toggles)
-    └── Business Account Controls
-        ├── Download Data
-        ├── Pause Campaigns
-        └── Deactivate Account
+└── /business/settings      → Account Settings
+    ├── Top Summary Card
+    ├── General Settings
+    ├── Notification Preferences
+    ├── Security Settings
+    ├── Financial Settings
+    ├── Advanced Settings
+    └── Account Lifecycle
 ```
 
 ## 🎨 Layout Structure
@@ -304,12 +362,12 @@ Wrong role → Appropriate dashboard
 
 ## 📊 Route Statistics
 
-- **Total Routes:** 18 pages
-- **Public Routes:** 5
-- **Investor Routes:** 5
-- **Business Routes:** 5
+- **Total Routes:** 25 pages
+- **Public Routes:** 8 (Landing, Auth, Explore, Campaign Details, Investment, Support, About, Contact)
+- **Investor Routes:** 7 (Home, Dashboard, Account, Transactions, Notifications, Settings, Explore)
+- **Business Routes:** 8 (Home, Dashboard, Financials, Listings, Company, Notifications, Settings, Explore)
 - **Layouts:** 3 (Root, Investor, Business)
-- **Shared Components:** 4
+- **Shared Components:** Multiple (Headers, Cards, Forms, etc.)
 
 ## 🎯 Route Testing Checklist
 
@@ -319,23 +377,29 @@ After running `npm run dev`, test each route:
 - [ ] `/` redirects to `/bd`
 - [ ] `/bd` loads with all sections
 - [ ] `/auth` shows login/signup tabs
-- [ ] `/explore` displays campaign grid
+- [ ] `/explore` displays campaign grid with filters
+- [ ] `/campaign/[id]` shows campaign details with tabs
+- [ ] `/invest/[campaignId]` displays investment page
+- [ ] `/support` shows support center with FAQs
 - [ ] `/about` shows all content sections
 - [ ] `/contact` renders contact form
 
 ### Investor Routes
-- [ ] `/investor/home` displays summary cards
-- [ ] `/investor/dashboard` shows investment table
-- [ ] `/investor/account` renders all forms
-- [ ] `/investor/notifications` lists notifications
-- [ ] `/investor/settings` shows all settings
+- [ ] `/investor/home` displays welcome and quick actions
+- [ ] `/investor/dashboard` shows comprehensive portfolio dashboard
+- [ ] `/investor/account` renders profile with banner and verification
+- [ ] `/investor/transactions` displays transaction ledger
+- [ ] `/investor/notifications` lists grouped notifications
+- [ ] `/investor/settings` shows all preference sections
 
 ### Business Routes
-- [ ] `/business/home` displays business summary
+- [ ] `/business/home` displays business welcome and actions
+- [ ] `/business/dashboard` shows operational control center
+- [ ] `/business/financials` displays two-tab financial view
 - [ ] `/business/listings` shows campaign list
-- [ ] `/business/company` renders profile forms
+- [ ] `/business/company` renders public company profile
 - [ ] `/business/notifications` lists notifications
-- [ ] `/business/settings` shows all settings
+- [ ] `/business/settings` shows account settings sections
 
 ### Navigation
 - [ ] Public header links work

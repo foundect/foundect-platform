@@ -17,6 +17,7 @@ import {
   Bell,
   Menu,
   X,
+  Building2,
 } from "lucide-react";
 
 // TODO: Protect business dashboard routes with auth & role-based guard
@@ -169,6 +170,13 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
             </button>
           </Link>
 
+          {/* Company */}
+          <Link href="/business/company">
+            <button className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg flex items-center justify-center hover:bg-white transition-all">
+              <Building2 className="h-5 w-5 text-slate-700" />
+            </button>
+          </Link>
+
           {/* Profile */}
           <Link href="/business/settings">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
@@ -195,13 +203,22 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
             <div className="flex items-center justify-between px-4 h-16">
               <Image src="/foundect-logo.png" alt="Foundect" width={120} height={32} className="h-7 w-auto" />
               <div className="flex items-center gap-3">
-                <button className="relative p-2 hover:bg-gray-100 rounded-xl transition-colors">
-                  <Bell className="h-5 w-5 text-slate-700" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-                </button>
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-xs">
-                  GT
-                </div>
+                <Link href="/business/notifications">
+                  <button className="relative p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                    <Bell className="h-5 w-5 text-slate-700" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                  </button>
+                </Link>
+                <Link href="/business/company">
+                  <button className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                    <Building2 className="h-5 w-5 text-slate-700" />
+                  </button>
+                </Link>
+                <Link href="/business/settings">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-xs">
+                    GT
+                  </div>
+                </Link>
               </div>
             </div>
           </div>
