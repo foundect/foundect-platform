@@ -8,6 +8,7 @@ import {
   CreditCard,
   ChevronDown,
   ChevronUp,
+  ChevronRight,
   Monitor,
   Download,
   FileText,
@@ -20,11 +21,28 @@ import {
   Eye,
   EyeOff,
   CheckCircle,
+  Plus,
+  X,
+  Globe,
 } from "lucide-react";
 import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
 import { HoverButton } from "@/components/ui/hover-button";
 
+// Bank Account Type
+interface BankAccount {
+  id: string;
+  bankName: string;
+  accountNumber: string;
+  isDefault: boolean;
+}
+
 export default function InvestorSettingsPage() {
+  // General Settings
+  const [language, setLanguage] = useState("English");
+  const [timezone, setTimezone] = useState("Asia/Dhaka");
+  const [currency, setCurrency] = useState("BDT");
+  const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
+
   // Security & Access
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -45,11 +63,16 @@ export default function InvestorSettingsPage() {
   });
 
   // Financial Controls
-  const [withdrawalFrequency, setWithdrawalFrequency] = useState("Monthly");
+  const [withdrawalTiming, setWithdrawalTiming] = useState("scheduled");
 
   // Advanced Settings
   const [advancedExpanded, setAdvancedExpanded] = useState(false);
   const [experimentalFeatures, setExperimentalFeatures] = useState(false);
+
+  // Bank Account Management (Read-only for display)
+  const [bankAccounts] = useState<BankAccount[]>([
+    { id: "1", bankName: "Islami Bank Bangladesh", accountNumber: "XXXX-XXXX-8765", isDefault: true },
+  ]);
 
   // Modals
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
@@ -87,7 +110,85 @@ export default function InvestorSettingsPage() {
         </p>
       </div>
 
-      {/* 1️⃣ Security & Access */}
+      {/* 1️⃣ General Settings */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+            <Globe className="h-5 w-5 text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">General Settings</h2>
+            <p className="text-sm text-gray-600">Configure your basic preferences</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {/* Language & Timezone */}
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Language
+              </label>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+              >
+                <option value="English">English</option>
+                <option value="বাংলা">বাংলা (Bangla)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Timezone
+              </label>
+              <select
+                value={timezone}
+                onChange={(e) => setTimezone(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+              >
+                <option value="Asia/Dhaka">Asia/Dhaka (GMT+6)</option>
+                <option value="Asia/Kolkata">Asia/Kolkata (GMT+5:30)</option>
+                <option value="UTC">UTC (GMT+0)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Currency & Date Format */}
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Default Currency
+              </label>
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+              >
+                <option value="BDT">BDT (৳)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date Format
+              </label>
+              <select
+                value={dateFormat}
+                onChange={(e) => setDateFormat(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+              >
+                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2️⃣ Security & Access */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
@@ -163,9 +264,12 @@ export default function InvestorSettingsPage() {
                 </button>
               </div>
             </div>
-            <LiquidGlassButton type="submit" variant="primary" size="default">
+            <button 
+              type="submit"
+              className="px-6 py-3 bg-[#0D3B66] hover:bg-[#0D3B66]/90 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D3B66] focus:ring-offset-2"
+            >
               Update Password
-            </LiquidGlassButton>
+            </button>
           </form>
         </div>
 
@@ -216,7 +320,7 @@ export default function InvestorSettingsPage() {
         </div>
       </div>
 
-      {/* 2️⃣ Investment Preferences */}
+      {/* 3️⃣ Investment Preferences */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center">
@@ -298,7 +402,7 @@ export default function InvestorSettingsPage() {
         </div>
       </div>
 
-      {/* 3️⃣ Notification Preferences */}
+      {/* 4️⃣ Notification Preferences */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
@@ -343,7 +447,7 @@ export default function InvestorSettingsPage() {
         </div>
       </div>
 
-      {/* 4️⃣ Financial Controls */}
+      {/* 5️⃣ Financial Controls */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
@@ -355,35 +459,143 @@ export default function InvestorSettingsPage() {
           </div>
         </div>
 
-        {/* Default Bank Account */}
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-sm font-medium text-gray-700 mb-1">Default Bank Account</p>
-          <p className="text-base font-semibold text-gray-900">Islami Bank Bangladesh</p>
-          <p className="text-sm text-gray-600">XXXX-XXXX-8765</p>
-          <p className="text-xs text-gray-500 mt-2 italic">
-            To update bank details, visit your Account page
-          </p>
+        {/* Bank Account Management */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-gray-700">Bank Account Management</h3>
+            <a
+              href="/investor/account"
+              className="text-sm font-medium text-[#0D3B66] hover:text-[#3A8DFF] transition-colors"
+            >
+              Manage in Account →
+            </a>
+          </div>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            {bankAccounts.find(acc => acc.isDefault) ? (
+              <>
+                <p className="text-sm font-medium text-gray-700 mb-1">Default Bank Account</p>
+                <p className="text-base font-semibold text-gray-900">
+                  {bankAccounts.find(acc => acc.isDefault)?.bankName}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {bankAccounts.find(acc => acc.isDefault)?.accountNumber}
+                </p>
+                <p className="text-xs text-gray-500 mt-2 italic">
+                  Manage bank accounts from your Account page
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-gray-600 mb-2">No bank account added yet</p>
+                <p className="text-xs text-gray-500 italic">
+                  Add bank accounts from your Account page
+                </p>
+              </>
+            )}
+          </div>
         </div>
 
-        {/* Profit Withdrawal Frequency */}
+        {/* Profit Withdrawal Timing */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Profit Withdrawal Frequency
+            Profit Withdrawal Timing
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {["Weekly", "Monthly", "Quarterly", "Annually"].map((freq) => (
-              <button
-                key={freq}
-                onClick={() => setWithdrawalFrequency(freq)}
-                className={`px-4 py-3 rounded-lg border-2 transition-all font-medium text-sm ${
-                  withdrawalFrequency === freq
-                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                {freq}
-              </button>
-            ))}
+          <div className="space-y-3">
+            {/* Scheduled Distribution */}
+            <button
+              onClick={() => setWithdrawalTiming("scheduled")}
+              className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                withdrawalTiming === "scheduled"
+                  ? "border-emerald-500 bg-emerald-50"
+                  : "border-gray-200 bg-white hover:border-gray-300"
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 flex-shrink-0 ${
+                  withdrawalTiming === "scheduled"
+                    ? "border-emerald-500 bg-emerald-500"
+                    : "border-gray-300 bg-white"
+                }`}>
+                  {withdrawalTiming === "scheduled" && (
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  )}
+                </div>
+                <div>
+                  <p className={`font-semibold mb-1 ${
+                    withdrawalTiming === "scheduled" ? "text-emerald-700" : "text-gray-900"
+                  }`}>
+                    Scheduled Distribution
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Profits are released automatically based on the campaign's predefined distribution schedule.
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* On Availability */}
+            <button
+              onClick={() => setWithdrawalTiming("onAvailability")}
+              className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                withdrawalTiming === "onAvailability"
+                  ? "border-emerald-500 bg-emerald-50"
+                  : "border-gray-200 bg-white hover:border-gray-300"
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 flex-shrink-0 ${
+                  withdrawalTiming === "onAvailability"
+                    ? "border-emerald-500 bg-emerald-500"
+                    : "border-gray-300 bg-white"
+                }`}>
+                  {withdrawalTiming === "onAvailability" && (
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  )}
+                </div>
+                <div>
+                  <p className={`font-semibold mb-1 ${
+                    withdrawalTiming === "onAvailability" ? "text-emerald-700" : "text-gray-900"
+                  }`}>
+                    On Availability
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Withdraw profits immediately once they are declared and available.
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* End-of-Campaign Payout */}
+            <button
+              onClick={() => setWithdrawalTiming("endOfCampaign")}
+              className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                withdrawalTiming === "endOfCampaign"
+                  ? "border-emerald-500 bg-emerald-50"
+                  : "border-gray-200 bg-white hover:border-gray-300"
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5 flex-shrink-0 ${
+                  withdrawalTiming === "endOfCampaign"
+                    ? "border-emerald-500 bg-emerald-500"
+                    : "border-gray-300 bg-white"
+                }`}>
+                  {withdrawalTiming === "endOfCampaign" && (
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  )}
+                </div>
+                <div>
+                  <p className={`font-semibold mb-1 ${
+                    withdrawalTiming === "endOfCampaign" ? "text-emerald-700" : "text-gray-900"
+                  }`}>
+                    End-of-Campaign Payout
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    All profits are withdrawn together at the end of the investment period.
+                  </p>
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -399,7 +611,7 @@ export default function InvestorSettingsPage() {
         </div>
       </div>
 
-      {/* 5️⃣ Advanced Settings */}
+      {/* 6️⃣ Advanced Settings */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
         <button
           onClick={() => setAdvancedExpanded(!advancedExpanded)}
@@ -422,69 +634,93 @@ export default function InvestorSettingsPage() {
         </button>
 
         {advancedExpanded && (
-          <div className="px-6 sm:px-8 pb-6 sm:pb-8 border-t border-gray-200 space-y-6">
-            {/* Logs */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Activity Logs</h3>
-              <div className="space-y-2">
-                <HoverButton variant="default" size="default" className="w-full justify-start">
-                  <FileText className="h-4 w-4 mr-2" />
-                  View Login History
-                </HoverButton>
-                <HoverButton variant="default" size="default" className="w-full justify-start">
-                  <Shield className="h-4 w-4 mr-2" />
-                  View Security Events
-                </HoverButton>
+          <div className="border-t border-gray-200">
+            {/* Activity Logs Section */}
+            <div className="px-6 sm:px-8 pt-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Activity Logs</h3>
+              <div className="divide-y divide-gray-100 -mx-6 sm:-mx-8">
+                {/* Login History */}
+                <button className="w-full flex items-center justify-between px-6 sm:px-8 py-4 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-5 w-5 text-gray-600" />
+                    <span className="text-sm font-medium text-gray-900">View Login History</span>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </button>
+
+                {/* Security Events */}
+                <button className="w-full flex items-center justify-between px-6 sm:px-8 py-4 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <Shield className="h-5 w-5 text-gray-600" />
+                    <span className="text-sm font-medium text-gray-900">View Security Events</span>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </button>
               </div>
             </div>
 
-            {/* Export Data */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Export Investment Summary</h3>
-              <div className="flex gap-3">
-                <HoverButton variant="default" size="default" className="flex-1">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export as PDF
-                </HoverButton>
-                <HoverButton variant="default" size="default" className="flex-1">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export as CSV
-                </HoverButton>
+            {/* Data & Exports Section */}
+            <div className="px-6 sm:px-8 pt-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Data & Exports</h3>
+              <div className="divide-y divide-gray-100 -mx-6 sm:-mx-8">
+                {/* Export as PDF */}
+                <button className="w-full flex items-center justify-between px-6 sm:px-8 py-4 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <Download className="h-5 w-5 text-gray-600" />
+                    <span className="text-sm font-medium text-gray-900">Export Investment Summary (PDF)</span>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </button>
+
+                {/* Export as CSV */}
+                <button className="w-full flex items-center justify-between px-6 sm:px-8 py-4 hover:bg-gray-50 transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <Download className="h-5 w-5 text-gray-600" />
+                    <span className="text-sm font-medium text-gray-900">Export Investment Summary (CSV)</span>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </button>
               </div>
             </div>
 
-            {/* Privacy Controls */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Privacy Controls</h3>
-              <HoverButton
-                variant="ghost"
-                size="default"
-                className="w-full justify-start"
-                onClick={() => console.log("Clearing cache...")}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Clear Cached Data
-              </HoverButton>
+            {/* Privacy Controls Section */}
+            <div className="px-6 sm:px-8 pt-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Privacy Controls</h3>
+              <div className="divide-y divide-gray-100 -mx-6 sm:-mx-8">
+                {/* Clear Cached Data */}
+                <button 
+                  onClick={() => console.log("Clearing cache...")}
+                  className="w-full flex items-center justify-between px-6 sm:px-8 py-4 hover:bg-gray-50 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <Trash2 className="h-5 w-5 text-gray-600" />
+                    <span className="text-sm font-medium text-gray-900">Clear Cached Data</span>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                </button>
+              </div>
             </div>
 
-            {/* Experimental Features */}
-            <div className="pt-6 border-t border-gray-200">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Experimental Features</h3>
-                  <p className="text-sm text-gray-600">
-                    Try new features before they're released
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                  <input
-                    type="checkbox"
-                    checked={experimentalFeatures}
-                    onChange={(e) => setExperimentalFeatures(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                </label>
+            {/* Experimental Features - Toggle Row */}
+            <div className="px-6 sm:px-8 pt-6 pb-6 sm:pb-8">
+              <div className="pt-6 border-t border-gray-200">
+                <button className="w-full flex items-center justify-between py-2 group">
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1 text-left">Experimental Features</h3>
+                    <p className="text-xs text-gray-600 text-left">
+                      Try new features before they're released
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
+                    <input
+                      type="checkbox"
+                      checked={experimentalFeatures}
+                      onChange={(e) => setExperimentalFeatures(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                  </label>
+                </button>
               </div>
             </div>
           </div>
@@ -503,21 +739,37 @@ export default function InvestorSettingsPage() {
           </div>
         </div>
 
-        <div className="space-y-3">
-          <HoverButton variant="default" size="default" className="w-full justify-start">
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Leave a Review
-          </HoverButton>
-          <HoverButton variant="default" size="default" className="w-full justify-start">
-            <Mail className="h-4 w-4 mr-2" />
-            Ask a Question / Contact Support
-          </HoverButton>
-          <HoverButton variant="default" size="default" className="w-full justify-start">
-            <Share2 className="h-4 w-4 mr-2" />
-            Share Foundect with Friends & Family
-          </HoverButton>
+        {/* Action Rows */}
+        <div className="divide-y divide-gray-100">
+          {/* Leave a Review */}
+          <button className="w-full flex items-center justify-between py-4 hover:bg-gray-50 transition-colors group">
+            <div className="flex items-center gap-3">
+              <MessageSquare className="h-5 w-5 text-gray-600" />
+              <span className="text-sm font-medium text-gray-900">Leave a Review</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+          </button>
+
+          {/* Ask a Question / Contact Support */}
+          <button className="w-full flex items-center justify-between py-4 hover:bg-gray-50 transition-colors group">
+            <div className="flex items-center gap-3">
+              <Mail className="h-5 w-5 text-gray-600" />
+              <span className="text-sm font-medium text-gray-900">Ask a Question / Contact Support</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+          </button>
+
+          {/* Share Foundect with Friends & Family */}
+          <button className="w-full flex items-center justify-between py-4 hover:bg-gray-50 transition-colors group">
+            <div className="flex items-center gap-3">
+              <Share2 className="h-5 w-5 text-gray-600" />
+              <span className="text-sm font-medium text-gray-900">Share Foundect with Friends & Family</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
+          </button>
         </div>
 
+        {/* Follow Us Section */}
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-sm font-medium text-gray-700 mb-3">Follow Us</p>
           <div className="flex gap-3">

@@ -16,10 +16,10 @@ export default function BusinessHomePage() {
           GREETING SECTION
       ======================================== */}
       <div className="animate-fade-in">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">
           Welcome back, {businessName}
         </h1>
-        <p className="text-slate-600 text-base md:text-lg">
+        <p className="text-slate-600 text-sm md:text-base leading-snug">
           Manage your campaigns, track progress, and explore new opportunities
         </p>
       </div>
@@ -30,20 +30,20 @@ export default function BusinessHomePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in animation-delay-200">
         {/* Create New Campaign */}
         <Link href="/business/listings">
-          <div className="group relative bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all cursor-pointer overflow-hidden">
+          <div className="group relative bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] rounded-2xl p-5 md:p-6 shadow-lg hover:shadow-xl transition-all cursor-pointer overflow-hidden">
             {/* Decorative glow */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-3xl" />
             
             <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Plus className="h-7 w-7 text-white" />
+              <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <Plus className="h-5 w-5 md:h-6 md:w-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Create New Campaign</h3>
-              <p className="text-white/80 text-sm mb-4">
+              <h3 className="text-lg md:text-xl font-bold text-white mb-1.5">Create New Campaign</h3>
+              <p className="text-white/80 text-xs md:text-sm mb-3">
                 Launch a new funding campaign and reach potential investors
               </p>
-              <div className="flex items-center text-white font-medium text-sm">
-                Get Started <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <div className="flex items-center text-white font-medium text-xs md:text-sm">
+                Get Started <ArrowRight className="ml-2 h-3.5 w-3.5 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </div>
@@ -51,20 +51,20 @@ export default function BusinessHomePage() {
 
         {/* Explore Opportunities */}
         <Link href="/explore">
-          <div className="group relative bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-lg border border-white/40 hover:shadow-xl transition-all cursor-pointer overflow-hidden">
+          <div className="group relative bg-white/80 backdrop-blur-lg rounded-2xl p-5 md:p-6 shadow-md border border-white/40 hover:shadow-lg transition-all cursor-pointer overflow-hidden">
             {/* Decorative gradient */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sky-200/30 to-blue-200/30 rounded-full blur-3xl" />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-sky-200/30 to-blue-200/30 rounded-full blur-3xl" />
             
             <div className="relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Compass className="h-7 w-7 text-[#0D3B66]" />
+              <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <Compass className="h-5 w-5 md:h-6 md:w-6 text-[#0D3B66]" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Explore Opportunities</h3>
-              <p className="text-slate-600 text-sm mb-4">
+              <h3 className="text-lg md:text-xl font-bold text-slate-900 mb-1.5">Explore Opportunities</h3>
+              <p className="text-slate-600 text-xs md:text-sm mb-3">
                 Invest in other Shari'ah-compliant businesses and diversify
               </p>
-              <div className="flex items-center text-[#0D3B66] font-medium text-sm">
-                Browse Now <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <div className="flex items-center text-[#0D3B66] font-medium text-xs md:text-sm">
+                Browse Now <ArrowRight className="ml-2 h-3.5 w-3.5 md:h-4 md:w-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </div>

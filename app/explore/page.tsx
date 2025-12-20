@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { PublicHeader } from "@/components/layouts/PublicHeader";
-import { GlassCard } from "@/components/ui/GlassCard";
-import { LiquidGlassButton } from "@/components/ui/liquid-glass-button";
 import { Search, Info } from "lucide-react";
 
 // Dummy campaign data with enhanced details
@@ -126,6 +125,7 @@ const campaigns = [
 ];
 
 export default function ExplorePage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSector, setSelectedSector] = useState("All");
   const [showTooltip, setShowTooltip] = useState<number | null>(null);
@@ -228,7 +228,7 @@ export default function ExplorePage() {
         {/* Campaign List - Vertical Layout */}
         <div className="max-w-4xl mx-auto space-y-4 sm:space-y-5">
           {filteredCampaigns.map((campaign) => (
-            <GlassCard key={campaign.id} className="overflow-hidden hover:shadow-xl transition-all duration-300">
+            <div key={campaign.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100">
               <div className="p-4 sm:p-6 space-y-4">
                 {/* 1. Header Row: Logo + Name + Status */}
                 <div className="flex items-start gap-3 sm:gap-4">
@@ -339,38 +339,30 @@ export default function ExplorePage() {
                   </div>
                 </div>
 
-                {/* 7. Call to Action Buttons */}
-                <div className="flex gap-3 pt-2">
-                  <LiquidGlassButton
-                    variant="primary"
-                    size="default"
-                    className="flex-1"
-                    onClick={() => console.log(`Invest in campaign ${campaign.id}`)}
-                  >
-                    Invest Now
-                  </LiquidGlassButton>
+                {/* 7. Call to Action */}
+                <div className="pt-2">
                   <button
-                    onClick={() => console.log(`View details ${campaign.id}`)}
-                    className="px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                    onClick={() => router.push(`/campaign/${campaign.id}`)}
+                    className="w-full px-6 py-3 bg-[#0D3B66] text-white font-medium rounded-xl hover:bg-[#0D3B66]/90 active:bg-[#0D3B66]/80 transition-colors"
                   >
-                    View Details
+                    View Campaign
                   </button>
                 </div>
               </div>
-            </GlassCard>
+            </div>
           ))}
         </div>
 
         {/* Empty State */}
         {filteredCampaigns.length === 0 && (
           <div className="text-center py-12 sm:py-16">
-            <GlassCard className="max-w-md mx-auto p-8">
+            <div className="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-md border border-gray-100">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-gray-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No campaigns found</h3>
               <p className="text-gray-600 text-sm">Try adjusting your search or filters</p>
-            </GlassCard>
+            </div>
           </div>
         )}
       </div>

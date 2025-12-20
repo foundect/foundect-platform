@@ -20,6 +20,11 @@ import {
   FileText,
   AlertTriangle,
   CheckCircle2,
+  Bell,
+  BellOff,
+  Play,
+  Download,
+  Image as ImageIcon,
 } from "lucide-react";
 
 // Mock campaign data
@@ -37,6 +42,22 @@ const campaignData = {
   duration: "24 months",
   contractType: "Musharakah",
   investorCount: 48,
+  
+  // Financial transparency data
+  estimatedAnnualizedReturn: 15.5,
+  estimatedTotalReturn: 31.0,
+  platformFee: 2.0,
+  successFee: 0.5,
+  serviceFee: 0.3,
+  
+  // Media assets
+  coverImage: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200",
+  additionalImages: [
+    "https://images.unsplash.com/photo-1558769132-cb1aea1c8347?w=800",
+    "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800",
+  ],
+  videoUrl: null, // Optional video
+  pitchDeckUrl: "/documents/valestrico-pitch-deck.pdf", // Optional pitch deck
   
   // Tab content
   overview: {
@@ -133,6 +154,7 @@ export default function CampaignDetailsPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [showAI, setShowAI] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [alertsEnabled, setAlertsEnabled] = useState(false);
 
   const tabs = [
     { id: "overview", label: "Campaign Overview" },
@@ -163,6 +185,20 @@ export default function CampaignDetailsPage() {
   const handleInvest = () => {
     router.push(`/invest/${campaignData.id}`);
   };
+
+  const toggleAlerts = () => {
+    setAlertsEnabled(!alertsEnabled);
+    // TODO: Save alert preference to backend
+  };
+
+  // Financial calculations (based on example ৳100,000 investment)
+  const exampleInvestment = 100000;
+  const estimatedProfitAmount = (exampleInvestment * campaignData.estimatedTotalReturn) / 100;
+  const totalChargesPercent = campaignData.platformFee + campaignData.successFee + campaignData.serviceFee;
+  const totalCharges = (estimatedProfitAmount * totalChargesPercent) / 100;
+  const netProfit = estimatedProfitAmount - totalCharges;
+  const netRepayment = exampleInvestment + netProfit;
+  const totalRepayment = exampleInvestment + estimatedProfitAmount;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
@@ -288,17 +324,186 @@ export default function CampaignDetailsPage() {
           </div>
         </section>
 
-        {/* 2. PRIMARY CALL-TO-ACTION */}
-        <div className="flex justify-center">
+        {/* 2. ESTIMATED RETURNS & CHARGES */}
+        <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            Estimated Returns & Charges
+          </h2>
+          
+          {/* Returns Estimates */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+              <p className="text-xs text-blue-600 font-medium mb-1">Estimated Annualized Return</p>
+              <p className="text-2xl font-bold text-blue-900">{campaignData.estimatedAnnualizedReturn}%</p>
+            </div>
+            <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+              <p className="text-xs text-green-600 font-medium mb-1">Estimated Total Return</p>
+              <p className="text-2xl font-bold text-green-900">{campaignData.estimatedTotalReturn}%</p>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
+              <p className="text-xs text-purple-600 font-medium mb-1">Estimated Profit Amount</p>
+              <p className="text-2xl font-bold text-purple-900">{formatCurrency(estimatedProfitAmount)}</p>
+              <p className="text-xs text-purple-600 mt-1">On ৳1L investment</p>
+            </div>
+            <div className="bg-teal-50 rounded-lg p-4 border border-teal-100">
+              <p className="text-xs text-teal-600 font-medium mb-1">Total Repayment</p>
+              <p className="text-2xl font-bold text-teal-900">{formatCurrency(totalRepayment)}</p>
+              <p className="text-xs text-teal-600 mt-1">Capital + Profit</p>
+            </div>
+          </div>
+
+          {/* Charges Breakdown */}
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Charges & Deductions</h3>
+            <div className="space-y-3 mb-4">
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                <span className="text-sm text-gray-700">Platform Fee</span>
+                <span className="text-sm font-semibold text-gray-900">{campaignData.platformFee}%</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                <span className="text-sm text-gray-700">Success Fee</span>
+                <span className="text-sm font-semibold text-gray-900">{campaignData.successFee}%</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                <span className="text-sm text-gray-700">Service Fee</span>
+                <span className="text-sm font-semibold text-gray-900">{campaignData.serviceFee}%</span>
+              </div>
+              <div className="flex items-center justify-between py-3 bg-gray-50 rounded-lg px-3 mt-3">
+                <span className="text-sm font-semibold text-gray-900">Total Charges</span>
+                <span className="text-sm font-bold text-gray-900">{totalChargesPercent}% (৳{(totalCharges / 1000).toFixed(1)}K)</span>
+              </div>
+            </div>
+
+            {/* Net Figures */}
+            <div className="grid sm:grid-cols-2 gap-4 mt-4">
+              <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+                <p className="text-xs text-emerald-600 font-medium mb-1">Net Estimated Profit</p>
+                <p className="text-xl font-bold text-emerald-900">{formatCurrency(netProfit)}</p>
+                <p className="text-xs text-emerald-600 mt-1">After all charges</p>
+              </div>
+              <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-200">
+                <p className="text-xs text-indigo-600 font-medium mb-1">Net Estimated Repayment</p>
+                <p className="text-xl font-bold text-indigo-900">{formatCurrency(netRepayment)}</p>
+                <p className="text-xs text-indigo-600 mt-1">What you receive</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start gap-2">
+              <Info className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-amber-800 leading-relaxed">
+                <strong>Disclaimer:</strong> Figures are estimated and may vary based on actual business performance and campaign terms. 
+                Returns are not guaranteed and you may lose some or all of your invested capital.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. CAMPAIGN MEDIA */}
+        <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Campaign Media</h2>
+          
+          {/* Cover Image */}
+          <div className="mb-6">
+            <p className="text-sm font-medium text-gray-700 mb-3">Cover Image</p>
+            <div className="relative aspect-video rounded-lg overflow-hidden border border-gray-200">
+              <Image
+                src={campaignData.coverImage}
+                alt="Campaign cover"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+
+          {/* Additional Images */}
+          {campaignData.additionalImages && campaignData.additionalImages.length > 0 && (
+            <div className="mb-6">
+              <p className="text-sm font-medium text-gray-700 mb-3">Gallery</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {campaignData.additionalImages.map((img, idx) => (
+                  <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition-colors cursor-pointer">
+                    <Image
+                      src={img}
+                      alt={`Gallery image ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Video (if available) */}
+          {campaignData.videoUrl && (
+            <div className="mb-6">
+              <p className="text-sm font-medium text-gray-700 mb-3">Campaign Video</p>
+              <div className="relative aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex items-center justify-center">
+                <button className="flex flex-col items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+                  <Play className="w-12 h-12" />
+                  <span className="text-sm font-medium">Play Video</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Pitch Deck */}
+          {campaignData.pitchDeckUrl && (
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-3">Pitch Deck</p>
+              <a
+                href={campaignData.pitchDeckUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Business Pitch Deck</p>
+                    <p className="text-xs text-gray-600">PDF Document</p>
+                  </div>
+                </div>
+                <Download className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+              </a>
+            </div>
+          )}
+        </section>
+
+        {/* 4. PRIMARY CALL-TO-ACTION */}
+        <div className="flex items-center justify-center gap-3 flex-wrap">
           <button
             onClick={handleInvest}
             className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
           >
             Invest Now
           </button>
+          <button
+            onClick={toggleAlerts}
+            className={`p-4 rounded-xl border-2 transition-all ${
+              alertsEnabled
+                ? "bg-blue-50 border-blue-500 text-blue-600"
+                : "bg-white border-gray-300 text-gray-600 hover:border-gray-400"
+            }`}
+            title={alertsEnabled ? "Alerts enabled" : "Enable alerts"}
+          >
+            {alertsEnabled ? <Bell className="w-6 h-6" /> : <BellOff className="w-6 h-6" />}
+          </button>
         </div>
+        {alertsEnabled && (
+          <div className="flex justify-center">
+            <p className="text-xs text-green-600 bg-green-50 px-4 py-2 rounded-lg border border-green-200">
+              ✓ You'll receive updates about this campaign
+            </p>
+          </div>
+        )}
 
-        {/* 3. TAB-BASED CONTENT SECTIONS */}
+        {/* 5. TAB-BASED CONTENT SECTIONS */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           {/* Tab Bar */}
           <div className="border-b border-gray-200 overflow-x-auto scrollbar-hide">
@@ -584,7 +789,7 @@ export default function CampaignDetailsPage() {
           </div>
         </section>
 
-        {/* 4. AI CAMPAIGN ASSISTANT */}
+        {/* 6. AI CAMPAIGN ASSISTANT */}
         <div className="flex justify-center">
           <button
             onClick={() => setShowAI(true)}
@@ -653,7 +858,7 @@ export default function CampaignDetailsPage() {
           </div>
         )}
 
-        {/* 5. COMMENTS & PUBLIC QUESTIONS */}
+        {/* 7. COMMENTS & PUBLIC QUESTIONS */}
         <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">
             Questions & Comments
@@ -680,13 +885,13 @@ export default function CampaignDetailsPage() {
             {mockComments.map((comment) => (
               <div key={comment.id} className="space-y-4">
                 {/* Main Comment */}
-                <div className="flex gap-4">
+                <div className="flex gap-3 sm:gap-4">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                     {comment.author[0]}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-gray-900">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="font-medium text-gray-900 text-sm sm:text-base">
                         {comment.author}
                       </span>
                       <span className="text-xs text-gray-500">
@@ -697,7 +902,7 @@ export default function CampaignDetailsPage() {
                         {comment.timestamp}
                       </span>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-gray-700 leading-relaxed text-sm sm:text-base break-words">
                       {comment.message}
                     </p>
                   </div>
@@ -705,16 +910,16 @@ export default function CampaignDetailsPage() {
 
                 {/* Reply */}
                 {comment.reply && (
-                  <div className="ml-14 flex gap-4 bg-gray-50 rounded-lg p-4">
+                  <div className="ml-8 sm:ml-14 flex gap-3 sm:gap-4 bg-gray-50 rounded-lg p-3 sm:p-4">
                     <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                       V
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-gray-900">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <span className="font-medium text-gray-900 text-sm sm:text-base">
                           {comment.reply.author}
                         </span>
-                        <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
+                        <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full whitespace-nowrap">
                           Business
                         </span>
                         <span className="text-xs text-gray-400">·</span>
@@ -722,7 +927,7 @@ export default function CampaignDetailsPage() {
                           {comment.reply.timestamp}
                         </span>
                       </div>
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base break-words">
                         {comment.reply.message}
                       </p>
                     </div>
@@ -732,16 +937,6 @@ export default function CampaignDetailsPage() {
             ))}
           </div>
         </section>
-
-        {/* 6. FINAL CALL-TO-ACTION */}
-        <div className="flex justify-center pb-8">
-          <button
-            onClick={handleInvest}
-            className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
-          >
-            Invest Now
-          </button>
-        </div>
       </div>
     </div>
   );

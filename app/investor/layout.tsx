@@ -1,8 +1,9 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   Home, 
   LayoutDashboard, 
@@ -17,7 +18,8 @@ import {
   Bell,
   User,
   Sun,
-  Moon
+  Moon,
+  ArrowLeft
 } from "lucide-react";
 
 // TODO: Protect investor dashboard routes with auth & role-based guard
@@ -30,8 +32,7 @@ const desktopNavItems = [
   { label: "Explore", href: "/explore", icon: Compass },
   { label: "Settings", href: "/investor/settings", icon: Settings },
   { label: "Transactions", href: "/investor/transactions", icon: Receipt },
-  { label: "Logs", href: "/investor/logs", icon: FileText },
-  { label: "Support", href: "/investor/support", icon: HelpCircle },
+  { label: "Support", href: "/support", icon: HelpCircle },
 ];
 
 const mobileNavItems = [
@@ -47,9 +48,23 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleTheme = () => setDarkMode(!darkMode);
+
+  // Mock user data - replace with actual user data from auth context
+  const userData = {
+    name: "Ahmed Rahman",
+    profileImage: null, // Set to image URL when available
+    initials: "AR"
+  };
+
+  // Determine which pages should show back button instead of top-right icons
+  const isNotificationsPage = pathname === "/investor/notifications";
+  const isAccountPage = pathname === "/investor/account";
+  const showBackButton = isNotificationsPage || isAccountPage;
+  const showTopRightIcons = !showBackButton;
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
@@ -160,24 +175,50 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* ========================================
-            TOP RIGHT: NOTIFICATIONS & PROFILE (ALL SCREENS)
+            TOP HEADER: BACK BUTTON OR NOTIFICATIONS & PROFILE
         ======================================== */}
-        <div className="fixed top-6 right-6 z-30 flex items-center gap-3">
-          {/* Notifications */}
-          <Link href="/investor/notifications">
-            <button className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg flex items-center justify-center hover:bg-white transition-all relative">
-              <Bell className="h-5 w-5 text-slate-700" />
-              <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+        {showBackButton ? (
+          // Back button for Notifications & Account pages
+          <div className="fixed top-6 left-6 z-30 lg:left-24">
+            <button
+              onClick={() => router.back()}
+              className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg flex items-center justify-center hover:bg-white transition-all"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="h-5 w-5 text-slate-700" />
             </button>
-          </Link>
+          </div>
+        ) : (
+          // Top-right icons for other pages
+          <div className="fixed top-6 right-6 z-30 flex items-center gap-3">
+            {/* Notifications */}
+            <Link href="/investor/notifications">
+              <button className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg flex items-center justify-center hover:bg-white transition-all relative">
+                <Bell className="h-5 w-5 text-slate-700" />
+                <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+              </button>
+            </Link>
 
-          {/* Profile */}
-          <Link href="/investor/account">
-            <button className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] shadow-lg flex items-center justify-center hover:scale-105 transition-all">
-              <User className="h-5 w-5 text-white" />
-            </button>
-          </Link>
-        </div>
+            {/* Profile - with profile picture or initials */}
+            <Link href="/investor/account">
+              <button className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] shadow-lg flex items-center justify-center hover:scale-105 transition-all overflow-hidden">
+                {userData.profileImage ? (
+                  <Image
+                    src={userData.profileImage}
+                    alt={userData.name}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white font-semibold text-sm">
+                    {userData.initials}
+                  </span>
+                )}
+              </button>
+            </Link>
+          </div>
+        )}
 
         {/* ========================================
             MAIN CONTENT AREA
@@ -303,9 +344,9 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
                     </Link>
 
                     <Link
-                      href="/investor/support"
+                      href="/support"
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                        pathname === "/investor/support" 
+                        pathname === "/support" 
                           ? "bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] text-white shadow-lg" 
                           : "hover:bg-slate-100"
                       }`}
@@ -313,19 +354,6 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
                     >
                       <HelpCircle className="h-5 w-5" />
                       <span className="font-medium">Support</span>
-                    </Link>
-
-                    <Link
-                      href="/investor/logs"
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                        pathname === "/investor/logs" 
-                          ? "bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] text-white shadow-lg" 
-                          : "hover:bg-slate-100"
-                      }`}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <FileText className="h-5 w-5" />
-                      <span className="font-medium">Logs</span>
                     </Link>
 
                     {/* Theme Toggle */}

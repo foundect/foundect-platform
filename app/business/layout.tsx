@@ -30,14 +30,14 @@ const desktopNavItems = [
   { label: "Explore", href: "/explore", icon: Compass },
   { label: "Financials", href: "/business/financials", icon: DollarSign },
   { label: "Settings", href: "/business/settings", icon: Settings },
-  { label: "Support", href: "/business/support", icon: HelpCircle },
+  { label: "Support", href: "/support", icon: HelpCircle },
 ];
 
 const mobileNavItems = [
   { label: "Home", href: "/business/home", icon: Home },
   { label: "Dashboard", href: "/business/dashboard", icon: LayoutDashboard },
+  { label: "Financials", href: "/business/financials", icon: DollarSign },
   { label: "AI", href: "#", icon: Sparkles, highlighted: true, disabled: true },
-  { label: "Explore", href: "/explore", icon: Compass },
   { label: "Menu", href: "#", icon: Menu, isMenuTrigger: true },
 ];
 
@@ -159,7 +159,7 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* ========================================
-            TOP RIGHT: NOTIFICATIONS & PROFILE (DESKTOP)
+            TOP RIGHT: NOTIFICATIONS & COMPANY LOGO (DESKTOP)
         ======================================== */}
         <div className="hidden lg:flex fixed top-6 right-6 z-30 items-center gap-3">
           {/* Notifications */}
@@ -170,18 +170,12 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
             </button>
           </Link>
 
-          {/* Company */}
+          {/* Company Logo/Avatar - Links to Company Page */}
           <Link href="/business/company">
-            <button className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg flex items-center justify-center hover:bg-white transition-all">
-              <Building2 className="h-5 w-5 text-slate-700" />
+            <button className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-sm shadow-lg hover:scale-105 transition-all overflow-hidden">
+              {/* TODO: Replace with actual business logo when available */}
+              <span>GT</span>
             </button>
-          </Link>
-
-          {/* Profile */}
-          <Link href="/business/settings">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
-              GT
-            </div>
           </Link>
         </div>
 
@@ -209,28 +203,25 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
                   </button>
                 </Link>
+                {/* Company Logo/Avatar - Links to Company Page */}
                 <Link href="/business/company">
-                  <button className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
-                    <Building2 className="h-5 w-5 text-slate-700" />
+                  <button className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-xs hover:scale-105 transition-all overflow-hidden">
+                    {/* TODO: Replace with actual business logo when available */}
+                    <span>GT</span>
                   </button>
-                </Link>
-                <Link href="/business/settings">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-xs">
-                    GT
-                  </div>
                 </Link>
               </div>
             </div>
           </div>
 
           {/* Mobile Main Content */}
-          <main className="pt-16 pb-20 px-4">
+          <main className="pt-16 pb-24 px-4">
             {children}
           </main>
 
           {/* Mobile Bottom Navigation */}
-          <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-white/40 shadow-2xl z-50">
-            <div className="flex items-center justify-around px-2 py-3">
+          <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 lg:hidden">
+            <div className="flex items-center justify-around px-2 py-2 pb-safe">
               {mobileNavItems.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
@@ -240,10 +231,10 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
                     <button
                       key={item.label}
                       onClick={() => setMobileMenuOpen(true)}
-                      className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all"
+                      className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all hover:bg-gray-50"
                     >
-                      <Icon className="h-5 w-5 text-slate-600" />
-                      <span className="text-xs text-slate-600 font-medium">{item.label}</span>
+                      <Icon className="h-5 w-5 text-gray-600" />
+                      <span className="text-xs text-gray-600 font-medium">{item.label}</span>
                     </button>
                   );
                 }
@@ -254,14 +245,17 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
                     href={item.disabled ? "#" : item.href}
                     className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all relative ${
                       item.highlighted
-                        ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-lg"
+                        ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-md"
                         : isActive
-                        ? "text-[#0D3B66]"
-                        : "text-slate-600"
+                        ? "bg-blue-50 text-[#0D3B66]"
+                        : "text-gray-600 hover:bg-gray-50"
                     }`}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className={`h-5 w-5 ${isActive && !item.highlighted ? 'scale-110' : ''} transition-transform`} />
                     <span className="text-xs font-medium">{item.label}</span>
+                    {isActive && !item.highlighted && (
+                      <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#0D3B66] rounded-full" />
+                    )}
                     {item.highlighted && (
                       <>
                         <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
@@ -302,12 +296,12 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
                   {/* Menu Items */}
                   <div className="space-y-2">
                     <Link
-                      href="/business/financials"
+                      href="/explore"
                       className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 transition-all"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <DollarSign className="h-5 w-5 text-slate-600" />
-                      <span className="font-medium text-slate-700">Financials</span>
+                      <Compass className="h-5 w-5 text-slate-600" />
+                      <span className="font-medium text-slate-700">Explore</span>
                     </Link>
 
                     <Link
@@ -320,7 +314,7 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
                     </Link>
 
                     <Link
-                      href="/business/support"
+                      href="/support"
                       className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 transition-all"
                       onClick={() => setMobileMenuOpen(false)}
                     >

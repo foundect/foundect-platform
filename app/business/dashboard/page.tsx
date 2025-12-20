@@ -23,8 +23,8 @@ import {
   Info,
 } from "lucide-react";
 
-// Dummy data for campaigns
-const campaigns = [
+// Dummy data for launched campaigns (created by business)
+const launchedCampaigns = [
   {
     id: 1,
     name: "Textile Manufacturing Expansion",
@@ -37,6 +37,8 @@ const campaigns = [
     target: 5000000,
     investors: 48,
     status: "Live",
+    profitSchedule: "Quarterly",
+    nextDistribution: "2025-01-15",
   },
   {
     id: 2,
@@ -50,6 +52,8 @@ const campaigns = [
     target: 2500000,
     investors: 32,
     status: "Live",
+    profitSchedule: "Monthly",
+    nextDistribution: "2024-12-30",
   },
   {
     id: 3,
@@ -63,6 +67,44 @@ const campaigns = [
     target: 5000000,
     investors: 67,
     status: "Completed",
+    profitSchedule: "End of term",
+    nextDistribution: null,
+  },
+];
+
+// Dummy data for invested campaigns (where business is an investor)
+const investedCampaigns = [
+  {
+    id: 4,
+    name: "Solar Energy Installation Project",
+    businessName: "Green Power Solutions",
+    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=500",
+    logo: "https://ui-avatars.com/api/?name=Green+Power&background=f59e0b&color=fff&size=128",
+    type: "Musharakah",
+    risk: 5,
+    raised: 4200000,
+    target: 6000000,
+    investors: 52,
+    status: "Live",
+    investmentAmount: 250000,
+    profitSchedule: "Quarterly",
+    nextDistribution: "2025-02-01",
+  },
+  {
+    id: 5,
+    name: "Halal Food Processing Facility",
+    businessName: "Pure Foods Ltd",
+    image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500",
+    logo: "https://ui-avatars.com/api/?name=Pure+Foods&background=22c55e&color=fff&size=128",
+    type: "Mudarabah",
+    risk: 4,
+    raised: 3500000,
+    target: 4000000,
+    investors: 38,
+    status: "Live",
+    investmentAmount: 150000,
+    profitSchedule: "End of term",
+    nextDistribution: null,
   },
 ];
 
@@ -135,11 +177,15 @@ const recentActivity = [
 
 export default function BusinessDashboard() {
   const [selectedCampaign, setSelectedCampaign] = useState<number | null>(null);
+  const [campaignView, setCampaignView] = useState<"launched" | "invested">("launched");
+
+  // Select campaigns based on view
+  const campaigns = campaignView === "launched" ? launchedCampaigns : investedCampaigns;
 
   // Calculate total metrics
-  const totalFundsRaised = campaigns.reduce((sum, c) => sum + c.raised, 0);
-  const totalInvestors = campaigns.reduce((sum, c) => sum + c.investors, 0);
-  const activeCampaigns = campaigns.filter((c) => c.status === "Live").length;
+  const totalFundsRaised = launchedCampaigns.reduce((sum, c) => sum + c.raised, 0);
+  const totalInvestors = launchedCampaigns.reduce((sum, c) => sum + c.investors, 0);
+  const activeCampaigns = launchedCampaigns.filter((c) => c.status === "Live").length;
 
   const getRiskLabel = (risk: number) => {
     if (risk <= 3) return "Low";
@@ -171,6 +217,28 @@ export default function BusinessDashboard() {
       default:
         return "bg-gray-100 text-gray-700";
     }
+  };
+
+  // Get profit distribution text based on contract type and schedule
+  const getProfitDistributionText = (type: string, schedule: string | null, nextDate: string | null) => {
+    if (type === "Murabaha") {
+      return {
+        text: "Profit distributed at end of investment term",
+        showDate: false,
+      };
+    }
+
+    if (schedule === "End of term" || !nextDate) {
+      return {
+        text: "Profit not yet eligible",
+        showDate: false,
+      };
+    }
+
+    return {
+      text: `Next profit distribution: ${new Date(nextDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`,
+      showDate: true,
+    };
   };
 
   return (
@@ -254,17 +322,69 @@ export default function BusinessDashboard() {
                   Next Profit Cycle
                 </p>
               </div>
-              <p className="text-2xl font-bold text-gray-900">Jan 15, 2025</p>
-              <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
-                Scheduled
-              </span>
+              {(() => {
+                const nextDistributions = launchedCampaigns
+                  .filter(c => c.nextDistribution && c.status === "Live")
+                  .map(c => new Date(c.nextDistribution!))
+                  .sort((a, b) => a.getTime() - b.getTime());
+                
+                if (nextDistributions.length > 0) {
+                  const nextDate = nextDistributions[0];
+                  return (
+                    <>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {nextDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                      <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                        Scheduled
+                      </span>
+                    </>
+                  );
+                } else {
+                  return (
+                    <>
+                      <p className="text-lg font-semibold text-gray-600">Not scheduled</p>
+                      <span className="inline-block mt-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                        End of term
+                      </span>
+                    </>
+                  );
+                }
+              })()}
             </div>
           </div>
         </section>
 
         {/* 3️⃣ CAMPAIGN PERFORMANCE SECTION */}
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Your Campaigns</h2>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <h2 className="text-xl font-semibold text-gray-900">Your Campaigns</h2>
+            
+            {/* Campaign View Toggle */}
+            <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+              <button
+                onClick={() => setCampaignView("launched")}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  campaignView === "launched"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                Launched Campaigns
+              </button>
+              <button
+                onClick={() => setCampaignView("invested")}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  campaignView === "invested"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                Invested Campaigns
+              </button>
+            </div>
+          </div>
+          
           <div className="space-y-4">
             {campaigns.map((campaign) => {
               const fundingPercentage = (campaign.raised / campaign.target) * 100;
@@ -359,20 +479,45 @@ export default function BusinessDashboard() {
                         </p>
                       </div>
 
+                      {/* Profit Distribution Info */}
+                      {(() => {
+                        const profitInfo = getProfitDistributionText(
+                          campaign.type,
+                          campaign.profitSchedule || null,
+                          campaign.nextDistribution || null
+                        );
+                        return (
+                          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <p className="text-xs text-gray-600 mb-1">Profit Distribution</p>
+                            <p className="text-sm font-medium text-gray-900">{profitInfo.text}</p>
+                          </div>
+                        );
+                      })()}
+
                       {/* Action Buttons */}
                       <div className="flex flex-wrap gap-3 pt-2">
                         <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
                           <Eye className="w-4 h-4" />
-                          View Campaign
+                          {campaignView === "launched" ? "View Campaign" : "View Investment"}
                         </button>
-                        <button className="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                          <FileText className="w-4 h-4" />
-                          Post Update
-                        </button>
-                        <button className="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                          <DollarSign className="w-4 h-4" />
-                          Manage Profit
-                        </button>
+                        {campaignView === "launched" && (
+                          <>
+                            <button className="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-2">
+                              <FileText className="w-4 h-4" />
+                              Post Update
+                            </button>
+                            <button className="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-2">
+                              <DollarSign className="w-4 h-4" />
+                              Manage Profit
+                            </button>
+                          </>
+                        )}
+                        {campaignView === "invested" && 'investmentAmount' in campaign && (
+                          <div className="px-4 py-2 bg-green-50 text-green-700 text-sm font-medium rounded-lg border border-green-200 flex items-center gap-2">
+                            <DollarSign className="w-4 h-4" />
+                            Invested: ৳{((campaign as any).investmentAmount / 100000).toFixed(1)}L
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -393,23 +538,49 @@ export default function BusinessDashboard() {
                 Last Distribution
               </p>
               <p className="text-2xl font-bold text-gray-900">Oct 15, 2024</p>
-              <p className="text-xs text-gray-500 mt-1">Quarterly cycle</p>
+              <p className="text-xs text-gray-500 mt-1">Most recent</p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
               <p className="text-sm font-medium text-gray-600 mb-2">
                 Distribution Model
               </p>
               <p className="text-lg font-semibold text-gray-900">
-                Profit-sharing based
+                Shari'ah-compliant
               </p>
-              <p className="text-xs text-gray-500 mt-1">Per campaign terms</p>
+              <p className="text-xs text-gray-500 mt-1">Per contract type</p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
               <p className="text-sm font-medium text-gray-600 mb-2">
-                Next Expected Cycle
+                Next Expected Distribution
               </p>
-              <p className="text-2xl font-bold text-gray-900">Jan 15, 2025</p>
-              <p className="text-xs text-gray-500 mt-1">In 27 days</p>
+              {(() => {
+                const activeCampaignsWithSchedule = launchedCampaigns.filter(
+                  c => c.status === "Live" && c.nextDistribution
+                );
+                
+                if (activeCampaignsWithSchedule.length > 0) {
+                  const nextDates = activeCampaignsWithSchedule
+                    .map(c => new Date(c.nextDistribution!))
+                    .sort((a, b) => a.getTime() - b.getTime());
+                  const nextDate = nextDates[0];
+                  
+                  return (
+                    <>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {nextDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">Scheduled</p>
+                    </>
+                  );
+                } else {
+                  return (
+                    <>
+                      <p className="text-lg font-semibold text-gray-600">Not scheduled</p>
+                      <p className="text-xs text-gray-500 mt-1">End of term only</p>
+                    </>
+                  );
+                }
+              })()}
             </div>
           </div>
 
@@ -417,7 +588,8 @@ export default function BusinessDashboard() {
             <p className="text-sm text-blue-800 flex items-start gap-2">
               <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <span>
-                Distributions are managed manually according to campaign terms.
+                <strong>Shari'ah-compliant profit distribution:</strong> Murabaha contracts distribute profit at end of term only. 
+                Mudarabah and Musharakah may have flexible schedules based on campaign terms.
               </span>
             </p>
           </div>
@@ -532,6 +704,8 @@ export default function BusinessDashboard() {
     </div>
   );
 }
+
+
 
 
 
