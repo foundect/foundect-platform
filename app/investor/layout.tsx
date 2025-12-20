@@ -44,6 +44,7 @@ const mobileNavItems = [
 
 export default function InvestorLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const pathname = usePathname();
 
@@ -188,8 +189,8 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
         {/* ========================================
             MOBILE BOTTOM NAVIGATION (<1024px)
         ======================================== */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 z-50 safe-area-bottom">
-          <div className="flex items-center justify-around px-2 py-3">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 z-50 shadow-lg">
+          <div className="flex items-center justify-around px-2 py-3 pb-safe">
             {mobileNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -200,8 +201,8 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
                 return (
                   <button
                     key={item.label}
-                    onClick={toggleSidebar}
-                    className="flex flex-col items-center gap-1 px-3 py-1"
+                    onClick={() => setMobileMenuOpen(true)}
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all hover:bg-gray-50"
                   >
                     <Icon className="h-5 w-5 text-gray-600" />
                     <span className="text-xs font-medium text-gray-600">{item.label}</span>
@@ -213,14 +214,15 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
                 return (
                   <button
                     key={item.label}
-                    className="flex flex-col items-center gap-1 px-3 py-1 relative"
+                    className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all relative bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-md"
                     disabled
                   >
-                    <div className="relative">
-                      <Icon className="h-5 w-5 text-[#3A8DFF]" />
-                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                    </div>
-                    <span className="text-xs font-medium text-[#3A8DFF]">{item.label}</span>
+                    <Icon className="h-5 w-5" />
+                    <span className="text-xs font-medium">{item.label}</span>
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                    <span className="absolute -top-2 right-0 text-[10px] bg-white text-blue-600 px-1.5 py-0.5 rounded-full font-bold shadow-sm">
+                      Soon
+                    </span>
                   </button>
                 );
               }
@@ -229,97 +231,116 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className={`flex flex-col items-center gap-1 px-3 py-1 ${
-                    isActive ? 'rounded-lg bg-blue-50' : ''
+                  className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all relative ${
+                    isActive 
+                      ? 'bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] text-white shadow-md scale-105' 
+                      : 'text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${isActive ? 'text-[#0D3B66]' : 'text-gray-600'}`} />
-                  <span className={`text-xs font-medium ${isActive ? 'text-[#0D3B66]' : 'text-gray-600'}`}>
+                  <Icon className={`h-5 w-5 transition-transform ${isActive ? 'scale-110' : ''}`} />
+                  <span className="text-xs font-medium">
                     {item.label}
                   </span>
+                  {isActive && (
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full" />
+                  )}
                 </Link>
               );
             })}
           </div>
-        </div>
+        </nav>
 
-        {/* Mobile Sidebar (when menu is clicked on mobile) */}
+        {/* Mobile Menu Drawer (Bottom Sheet) */}
         <div className="lg:hidden">
-          {sidebarOpen && (
+          {mobileMenuOpen && (
             <>
+              {/* Backdrop */}
               <div 
-                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
-                onClick={toggleSidebar}
+                className="fixed inset-0 bg-black/50 z-[60] animate-fade-in"
+                onClick={() => setMobileMenuOpen(false)}
               />
-              <div className="fixed top-0 left-0 h-full w-72 bg-white/95 backdrop-blur-xl border-r border-gray-200 shadow-2xl z-50 transform transition-transform duration-300">
-                <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] bg-clip-text text-transparent">
-                      Foundect
-                    </h2>
-                    <p className="text-sm text-slate-600 mt-1">Investor Portal</p>
+
+              {/* Bottom Drawer */}
+              <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[70] animate-slide-up max-h-[70vh] overflow-y-auto">
+                <div className="p-6">
+                  {/* Drawer Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-bold text-slate-900">Menu</h3>
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
                   </div>
-                  <button onClick={toggleSidebar}>
-                    <X className="h-6 w-6 text-slate-700" />
-                  </button>
-                </div>
 
-                <nav className="p-4 space-y-2">
-                  {desktopNavItems.map((item) => {
-                    const Icon = item.icon;
-                    const isActive = pathname === item.href;
-                    const isDisabled = item.disabled;
+                  {/* Menu Items - Only items NOT in bottom nav */}
+                  <div className="space-y-2">
+                    <Link
+                      href="/investor/transactions"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                        pathname === "/investor/transactions" 
+                          ? "bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] text-white shadow-lg" 
+                          : "hover:bg-slate-100"
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Receipt className="h-5 w-5" />
+                      <span className="font-medium">Transactions</span>
+                    </Link>
 
-                    if (isDisabled) {
-                      return (
-                        <div
-                          key={item.label}
-                          className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 border-2 border-blue-200 relative cursor-not-allowed"
-                        >
-                          <div className="relative">
-                            <Icon className="h-5 w-5 text-[#3A8DFF]" />
-                            <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                          </div>
-                          <span className="font-semibold text-[#0D3B66]">{item.label}</span>
-                          <span className="ml-auto text-xs bg-blue-200 text-[#0D3B66] px-2 py-1 rounded-full">
-                            Soon
-                          </span>
-                        </div>
-                      );
-                    }
+                    <Link
+                      href="/investor/settings"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                        pathname === "/investor/settings" 
+                          ? "bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] text-white shadow-lg" 
+                          : "hover:bg-slate-100"
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Settings className="h-5 w-5" />
+                      <span className="font-medium">Settings</span>
+                    </Link>
 
-                    return (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        onClick={toggleSidebar}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                          isActive
-                            ? 'bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] text-white shadow-lg'
-                            : 'text-slate-700 hover:bg-gray-100'
-                        }`}
-                      >
-                        <Icon className="h-5 w-5" />
-                        <span className="font-medium">{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                </nav>
+                    <Link
+                      href="/investor/support"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                        pathname === "/investor/support" 
+                          ? "bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] text-white shadow-lg" 
+                          : "hover:bg-slate-100"
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <HelpCircle className="h-5 w-5" />
+                      <span className="font-medium">Support</span>
+                    </Link>
 
-                <div className="absolute bottom-6 left-4 right-4">
-                  <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all"
-                  >
-                    <span className="font-medium text-slate-700">Theme</span>
-                    <div className="flex items-center gap-2">
+                    <Link
+                      href="/investor/logs"
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                        pathname === "/investor/logs" 
+                          ? "bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] text-white shadow-lg" 
+                          : "hover:bg-slate-100"
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <FileText className="h-5 w-5" />
+                      <span className="font-medium">Logs</span>
+                    </Link>
+
+                    {/* Theme Toggle */}
+                    <button
+                      onClick={toggleTheme}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-100 transition-all w-full"
+                    >
                       {darkMode ? (
-                        <Moon className="h-5 w-5 text-slate-700" />
+                        <Sun className="h-5 w-5 text-slate-600" />
                       ) : (
-                        <Sun className="h-5 w-5 text-slate-700" />
+                        <Moon className="h-5 w-5 text-slate-600" />
                       )}
-                    </div>
-                  </button>
+                      <span className="font-medium text-slate-700">Theme Toggle</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </>
