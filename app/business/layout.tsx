@@ -36,8 +36,8 @@ const desktopNavItems = [
 const mobileNavItems = [
   { label: "Home", href: "/business/home", icon: Home },
   { label: "Dashboard", href: "/business/dashboard", icon: LayoutDashboard },
-  { label: "Financials", href: "/business/financials", icon: DollarSign },
   { label: "AI", href: "#", icon: Sparkles, highlighted: true, disabled: true },
+  { label: "Financials", href: "/business/financials", icon: DollarSign },
   { label: "Menu", href: "#", icon: Menu, isMenuTrigger: true },
 ];
 
@@ -189,9 +189,9 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
         </main>
 
         {/* ========================================
-            MOBILE LAYOUT (<1024px)
+            MOBILE MAIN CONTENT (<1024px)
         ======================================== */}
-        <div className="lg:hidden">
+        <main className="lg:hidden">
           {/* Mobile Top Bar */}
           <div className="fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-lg border-b border-gray-200/50">
             <div className="flex items-center justify-between px-4 h-16">
@@ -214,14 +214,18 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* Mobile Main Content */}
-          <main className="pt-16 pb-24 px-4">
+          {/* Mobile Content with proper padding */}
+          <div className="pt-16 pb-20 px-4">
             {children}
-          </main>
+          </div>
+        </main>
 
-          {/* Mobile Bottom Navigation */}
-          <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 lg:hidden">
-            <div className="flex items-center justify-around px-2 py-2 pb-safe">
+        {/* ========================================
+            MOBILE BOTTOM NAVIGATION - FIXED
+            Visible ONLY on mobile (<1024px)
+        ======================================== */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 lg:hidden">
+          <div className="flex items-center justify-around px-2 py-2">
               {mobileNavItems.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
@@ -270,17 +274,20 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
             </div>
           </nav>
 
-          {/* Mobile Menu Drawer */}
-          {mobileMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <div
-                className="fixed inset-0 bg-black/50 z-50 animate-fade-in"
-                onClick={() => setMobileMenuOpen(false)}
-              />
+        {/* ========================================
+            MOBILE MENU DRAWER
+            Visible ONLY on mobile (<1024px)
+        ======================================== */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/50 z-[60] animate-fade-in"
+              onClick={() => setMobileMenuOpen(false)}
+            />
 
-              {/* Drawer */}
-              <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-50 animate-slide-up max-h-[70vh] overflow-y-auto">
+            {/* Drawer */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[70] animate-slide-up max-h-[70vh] overflow-y-auto">
                 <div className="p-6">
                   {/* Header */}
                   <div className="flex items-center justify-between mb-6">
@@ -332,9 +339,9 @@ export default function BusinessLayout({ children }: { children: ReactNode }) {
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -221,10 +221,46 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
         )}
 
         {/* ========================================
-            MAIN CONTENT AREA
+            MAIN CONTENT AREA (DESKTOP)
         ======================================== */}
-        <main className="pt-24 lg:pt-20 px-4 sm:px-6 lg:px-8 pb-24 lg:pb-8">
-          {children}
+        <main className="hidden lg:block pt-20 px-8 pb-8">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
+
+        {/* ========================================
+            MOBILE MAIN CONTENT (<1024px)
+        ======================================== */}
+        <main className="lg:hidden">
+          {/* Mobile Top Bar */}
+          <div className="fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-lg border-b border-gray-200/50">
+            <div className="flex items-center justify-between px-4 h-16">
+              <Image src="/foundect-logo.png" alt="Foundect" width={120} height={32} className="h-7 w-auto" />
+              <div className="flex items-center gap-3">
+                <Link href="/investor/notifications">
+                  <button className="w-10 h-10 rounded-xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-sm flex items-center justify-center hover:bg-white transition-all relative">
+                    <Bell className="h-5 w-5 text-slate-700" />
+                    <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+                  </button>
+                </Link>
+                <Link href="/investor/account">
+                  <button className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0D3B66] to-[#3A8DFF] flex items-center justify-center text-white font-bold text-xs shadow-sm hover:scale-105 transition-all overflow-hidden">
+                    {userData.profileImage ? (
+                      <Image src={userData.profileImage} alt={userData.name} width={40} height={40} className="object-cover" />
+                    ) : (
+                      <span>{userData.initials}</span>
+                    )}
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Content with proper padding */}
+          <div className="pt-16 pb-20 px-4">
+            {children}
+          </div>
         </main>
 
         {/* ========================================
@@ -291,18 +327,20 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
           </div>
         </nav>
 
-        {/* Mobile Menu Drawer (Bottom Sheet) */}
-        <div className="lg:hidden">
-          {mobileMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <div 
-                className="fixed inset-0 bg-black/50 z-[60] animate-fade-in"
-                onClick={() => setMobileMenuOpen(false)}
-              />
+        {/* ========================================
+            MOBILE MENU DRAWER
+            Visible ONLY on mobile (<1024px)
+        ======================================== */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden">
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/50 z-[60] animate-fade-in"
+              onClick={() => setMobileMenuOpen(false)}
+            />
 
-              {/* Bottom Drawer */}
-              <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[70] animate-slide-up max-h-[70vh] overflow-y-auto">
+            {/* Bottom Drawer */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl z-[70] animate-slide-up max-h-[70vh] overflow-y-auto">
                 <div className="p-6">
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between mb-6">
@@ -371,9 +409,8 @@ export default function InvestorLayout({ children }: { children: ReactNode }) {
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+        )}
       </div>
     </div>
   );

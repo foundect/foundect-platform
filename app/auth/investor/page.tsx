@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function InvestorSignupPage() {
   // ========== GLOBAL STATE ==========
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // Step 1
@@ -49,6 +51,8 @@ export default function InvestorSignupPage() {
   const [quizPassed, setQuizPassed] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [stepError, setStepError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   // ========== PASSWORD VALIDATION ==========
   const validatePassword = (pwd: string) => {
@@ -66,6 +70,7 @@ export default function InvestorSignupPage() {
   };
 
   const passwordValidation = validatePassword(formData.password);
+  const isValidBdPhone = (value: string) => /^(01)\d{9}$/.test(value);
 
   // ========== AGE VALIDATION ==========
   const calculateAge = (dob: string) => {
@@ -85,7 +90,7 @@ export default function InvestorSignupPage() {
     return (
       formData.fullName.trim() !== "" &&
       formData.email.includes("@") &&
-      formData.phone.trim() !== "" &&
+      isValidBdPhone(formData.phone.trim()) &&
       formData.password !== "" &&
       formData.password === formData.confirmPassword &&
       passwordValidation.hasMinLength &&
@@ -143,9 +148,51 @@ export default function InvestorSignupPage() {
     }
   }, [resendTimer]);
 
+  // Redirect if account is already pending review or rejected
+  useEffect(() => {
+    try {
+      const status = localStorage.getItem("foundect_account_status");
+      const type = localStorage.getItem("foundect_account_type");
+      const approvedSeen = localStorage.getItem("foundect_account_approved_seen");
+
+      if (status === "pending_review") {
+        router.replace("/auth/review?type=investor");
+      } else if (status === "rejected") {
+        router.replace("/auth/rejected?type=investor");
+      } else if (status === "approved" && type === "investor") {
+        if (approvedSeen === "true") {
+          router.replace("/investor");
+        } else {
+          router.replace("/auth/approved?type=investor");
+        }
+      }
+    } catch (err) {
+      console.warn("Unable to read stored status", err);
+    }
+  }, [router]);
+
   // ========== HANDLERS ==========
   const handleInputChange = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value });
+    if (stepError) setStepError("");
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 11);
+    setFormData({ ...formData, phone: digitsOnly });
+    setPhoneVerified(false);
+    if (stepError) setStepError("");
+
+    if (!digitsOnly) {
+      setPhoneError("");
+      return;
+    }
+
+    if (!isValidBdPhone(digitsOnly)) {
+      setPhoneError("Use a Bangladeshi number (11 digits, starts with 01).");
+    } else {
+      setPhoneError("");
+    }
   };
 
   const handleFileUpload = (field: string, file: File | null) => {
@@ -177,6 +224,12 @@ export default function InvestorSignupPage() {
   };
 
   const handleContinueStep1 = () => {
+    if (!isValidBdPhone(formData.phone.trim())) {
+      setStepError("Enter a valid Bangladeshi phone number to continue.");
+      return;
+    }
+
+    setStepError("");
     if (!phoneVerified) {
       setOtpModalOpen(true);
       setResendTimer(60);
@@ -184,15 +237,60 @@ export default function InvestorSignupPage() {
   };
 
   const handleNextStep = () => {
-    if (currentStep === 1 && isStep1Valid()) setCurrentStep(2);
-    else if (currentStep === 2 && isStep2Valid()) setCurrentStep(3);
-    else if (currentStep === 3 && isStep3Valid()) setCurrentStep(4);
-    else if (currentStep === 4 && isStep4Valid()) setCurrentStep(5);
-    else if (currentStep === 5 && isStep5Valid()) setCurrentStep(6);
+    let error = "";
+
+    if (currentStep === 1) {
+      if (!formData.fullName.trim()) error = "Full name is required.";
+      else if (!formData.email.includes("@")) error = "Enter a valid email address.";
+      else if (!isValidBdPhone(formData.phone.trim())) error = "Phone must be Bangladeshi format (01XXXXXXXXX).";
+      else if (!phoneVerified) error = "Verify your phone via OTP before continuing.";
+      else if (formData.password !== formData.confirmPassword) error = "Passwords must match.";
+      else if (
+        !passwordValidation.hasMinLength ||
+        !passwordValidation.hasUppercase ||
+        !passwordValidation.hasNumber ||
+        !passwordValidation.hasSpecial
+      ) {
+        error = "Password must meet all strength requirements.";
+      } else if (!formData.agreeTerms) {
+        error = "Please agree to the Terms & Shari'ah Policy.";
+      } else {
+        setCurrentStep(2);
+      }
+    } else if (currentStep === 2) {
+      if (!isStep2Valid()) {
+        error = "Complete all profile fields and confirm you are 18+.";
+      } else {
+        setCurrentStep(3);
+      }
+    } else if (currentStep === 3) {
+      if (!isStep3Valid()) {
+        error = "Upload NID (front/back), selfie, and nominee details.";
+      } else {
+        setCurrentStep(4);
+      }
+    } else if (currentStep === 4) {
+      if (!isStep4Valid()) {
+        error = "Fill bank details or choose to skip for now.";
+      } else {
+        setCurrentStep(5);
+      }
+    } else if (currentStep === 5) {
+      if (!isStep5Valid()) {
+        error = "Please confirm the Shari'ah declaration.";
+      } else {
+        setCurrentStep(6);
+      }
+    }
+
+    setStepError(error);
   };
 
   const handleBackStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+    if (currentStep > 1) {
+      setStepError("");
+      setCurrentStep(currentStep - 1);
+    }
   };
 
   const handleQuizSubmit = () => {
@@ -213,21 +311,36 @@ export default function InvestorSignupPage() {
     }
   };
 
+  const handlePrimaryAction = () => {
+    if (currentStep === 1 && !phoneVerified) {
+      handleContinueStep1();
+      return;
+    }
+    handleNextStep();
+  };
+
   const handleCompleteRegistration = () => {
     console.log("Form Data:", formData);
     console.log("Bank Skipped:", bankSkipped);
     console.log("Quiz Passed:", quizPassed);
+    try {
+      localStorage.setItem("foundect_account_status", "pending_review");
+      localStorage.setItem("foundect_account_type", "investor");
+    } catch (err) {
+      console.warn("Unable to persist status", err);
+    }
     setShowSuccess(true);
+    router.push("/auth/review?type=investor");
   };
 
   // ========== RENDER ==========
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-[520px] bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 transition-all duration-300">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-start md:items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-[520px] bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 md:p-8 transition-all duration-300">
         
         {/* ========== STEP INDICATOR ========== */}
         {!showSuccess && (
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <p className="text-sm text-gray-600 mb-2">Step {currentStep} of 6</p>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
@@ -240,15 +353,15 @@ export default function InvestorSignupPage() {
 
         {/* ========== STEP 1: ACCOUNT SETUP ========== */}
         {currentStep === 1 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-[#0D3B66] mb-4">Create Your Account</h2>
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold text-[#0D3B66] mb-2 md:mb-4">Create Your Account</h2>
             
             <input
               type="text"
               placeholder="Full Name"
               value={formData.fullName}
               onChange={(e) => handleInputChange("fullName", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             />
             
             <input
@@ -256,28 +369,26 @@ export default function InvestorSignupPage() {
               placeholder="Email"
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             />
             
             <div className="flex gap-2">
-              <select
-                value={formData.countryCode}
-                onChange={(e) => handleInputChange("countryCode", e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
-              >
-                <option value="+88">+88</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-                <option value="+91">+91</option>
-              </select>
+              <div className="px-3 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 flex items-center">
+                +88
+              </div>
               <input
                 type="tel"
-                placeholder="Phone Number"
+                inputMode="numeric"
+                maxLength={11}
+                placeholder="01XXXXXXXXX"
                 value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                className="flex-1 px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
               />
             </div>
+            {phoneError && (
+              <p className="text-xs text-red-600 -mt-1">{phoneError}</p>
+            )}
             
             <div>
               <input
@@ -285,7 +396,7 @@ export default function InvestorSignupPage() {
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
               />
               {formData.password && (
                 <div className="mt-2 space-y-1 text-xs">
@@ -316,7 +427,7 @@ export default function InvestorSignupPage() {
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             />
             {formData.confirmPassword && formData.password !== formData.confirmPassword && (
               <p className="text-xs text-red-600">Passwords do not match</p>
@@ -330,7 +441,17 @@ export default function InvestorSignupPage() {
                 className="mt-1"
               />
               <span className="text-sm text-gray-700">
-                I agree to the Terms & Conditions and Shari'ah Policy
+                I agree to the{" "}
+                <a href="/terms" className="text-[#3A8DFF] hover:underline">
+                  Terms & Conditions
+                </a>{" "}
+                and{" "}
+                <a
+                  href="/shariah-compliance-policy"
+                  className="text-[#3A8DFF] hover:underline"
+                >
+                  Shari'ah Policy
+                </a>
               </span>
             </label>
             
@@ -339,27 +460,26 @@ export default function InvestorSignupPage() {
             )}
             
             <button
-              onClick={phoneVerified ? handleNextStep : handleContinueStep1}
-              disabled={!formData.fullName || !formData.email || !formData.phone || !formData.password || 
-                       formData.password !== formData.confirmPassword || !formData.agreeTerms ||
-                       !passwordValidation.hasMinLength || !passwordValidation.hasUppercase ||
-                       !passwordValidation.hasNumber || !passwordValidation.hasSpecial}
-              className="w-full bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+              onClick={handlePrimaryAction}
+              className="w-full bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all"
             >
               {phoneVerified ? "Continue" : "Verify Phone"}
             </button>
+            {stepError && (
+              <p className="text-sm text-red-600">{stepError}</p>
+            )}
           </div>
         )}
 
         {/* ========== STEP 2: INVESTOR PROFILE ========== */}
         {currentStep === 2 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-[#0D3B66] mb-4">Investor Profile</h2>
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold text-[#0D3B66] mb-2 md:mb-4">Investor Profile</h2>
             
             <select
               value={formData.gender}
               onChange={(e) => handleInputChange("gender", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -372,7 +492,7 @@ export default function InvestorSignupPage() {
                 type="date"
                 value={formData.dob}
                 onChange={(e) => handleInputChange("dob", e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
               />
               {formData.dob && calculateAge(formData.dob) < 18 && (
                 <p className="text-xs text-red-600 mt-1">You must be at least 18 years old</p>
@@ -384,13 +504,13 @@ export default function InvestorSignupPage() {
               placeholder="Occupation"
               value={formData.occupation}
               onChange={(e) => handleInputChange("occupation", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             />
             
             <select
               value={formData.monthlyIncome}
               onChange={(e) => handleInputChange("monthlyIncome", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             >
               <option value="">Monthly Income Range</option>
               <option value="0-25k">৳0 - ৳25,000</option>
@@ -402,7 +522,7 @@ export default function InvestorSignupPage() {
             <select
               value={formData.investmentExperience}
               onChange={(e) => handleInputChange("investmentExperience", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             >
               <option value="">Investment Experience</option>
               <option value="beginner">Beginner</option>
@@ -413,7 +533,7 @@ export default function InvestorSignupPage() {
             <select
               value={formData.preferredInvestmentType}
               onChange={(e) => handleInputChange("preferredInvestmentType", e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
             >
               <option value="">Preferred Investment Type</option>
               <option value="short">Short-term</option>
@@ -430,19 +550,21 @@ export default function InvestorSignupPage() {
               </button>
               <button
                 onClick={handleNextStep}
-                disabled={!isStep2Valid()}
-                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all"
               >
                 Continue
               </button>
             </div>
+            {stepError && (
+              <p className="text-sm text-red-600">{stepError}</p>
+            )}
           </div>
         )}
 
         {/* ========== STEP 3: KYC + NOMINEE ========== */}
         {currentStep === 3 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-[#0D3B66] mb-4">KYC & Nominee</h2>
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold text-[#0D3B66] mb-2 md:mb-4">KYC & Nominee</h2>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">NID Front</label>
@@ -450,7 +572,7 @@ export default function InvestorSignupPage() {
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleFileUpload("nidFront", e.target.files?.[0] || null)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
               />
               {formData.nidFront && (
                 <p className="text-xs text-green-600 mt-1">✓ {formData.nidFront.name}</p>
@@ -463,7 +585,7 @@ export default function InvestorSignupPage() {
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleFileUpload("nidBack", e.target.files?.[0] || null)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
               />
               {formData.nidBack && (
                 <p className="text-xs text-green-600 mt-1">✓ {formData.nidBack.name}</p>
@@ -476,7 +598,7 @@ export default function InvestorSignupPage() {
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleFileUpload("selfie", e.target.files?.[0] || null)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
               />
               {formData.selfie && (
                 <p className="text-xs text-green-600 mt-1">✓ {formData.selfie.name}</p>
@@ -491,7 +613,7 @@ export default function InvestorSignupPage() {
                 placeholder="Nominee Full Name"
                 value={formData.nomineeName}
                 onChange={(e) => handleInputChange("nomineeName", e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all mb-3"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all mb-3"
               />
               
               <input
@@ -499,7 +621,7 @@ export default function InvestorSignupPage() {
                 placeholder="Nominee Phone"
                 value={formData.nomineePhone}
                 onChange={(e) => handleInputChange("nomineePhone", e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all mb-3"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all mb-3"
               />
               
               <input
@@ -507,7 +629,7 @@ export default function InvestorSignupPage() {
                 placeholder="Relationship"
                 value={formData.nomineeRelationship}
                 onChange={(e) => handleInputChange("nomineeRelationship", e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
+                className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all"
               />
             </div>
             
@@ -520,19 +642,21 @@ export default function InvestorSignupPage() {
               </button>
               <button
                 onClick={handleNextStep}
-                disabled={!isStep3Valid()}
-                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all"
               >
                 Continue
               </button>
             </div>
+            {stepError && (
+              <p className="text-sm text-red-600">{stepError}</p>
+            )}
           </div>
         )}
 
         {/* ========== STEP 4: BANK SETUP ========== */}
         {currentStep === 4 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-[#0D3B66] mb-4">Bank Setup (Optional)</h2>
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold text-[#0D3B66] mb-2 md:mb-4">Bank Setup (Optional)</h2>
             
             <input
               type="text"
@@ -540,7 +664,7 @@ export default function InvestorSignupPage() {
               value={formData.bankName}
               onChange={(e) => handleInputChange("bankName", e.target.value)}
               disabled={bankSkipped}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
             />
             
             <input
@@ -549,7 +673,7 @@ export default function InvestorSignupPage() {
               value={formData.branch}
               onChange={(e) => handleInputChange("branch", e.target.value)}
               disabled={bankSkipped}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
             />
             
             <input
@@ -558,7 +682,7 @@ export default function InvestorSignupPage() {
               value={formData.accountNumber}
               onChange={(e) => handleInputChange("accountNumber", e.target.value)}
               disabled={bankSkipped}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
             />
             
             <input
@@ -567,7 +691,7 @@ export default function InvestorSignupPage() {
               value={formData.accountHolderName}
               onChange={(e) => handleInputChange("accountHolderName", e.target.value)}
               disabled={bankSkipped}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
+              className="w-full px-3.5 md:px-4 py-2.5 md:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3A8DFF] focus:border-transparent outline-none transition-all disabled:bg-gray-100"
             />
             
             <button
@@ -586,19 +710,21 @@ export default function InvestorSignupPage() {
               </button>
               <button
                 onClick={handleNextStep}
-                disabled={!isStep4Valid()}
-                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all"
               >
                 Continue
               </button>
             </div>
+            {stepError && (
+              <p className="text-sm text-red-600">{stepError}</p>
+            )}
           </div>
         )}
 
         {/* ========== STEP 5: SHARI'AH DECLARATION ========== */}
         {currentStep === 5 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-[#0D3B66] mb-4">Shari'ah Declaration</h2>
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-xl md:text-2xl font-bold text-[#0D3B66] mb-2 md:mb-4">Shari'ah Declaration</h2>
             
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-gray-700 leading-relaxed">
@@ -627,12 +753,14 @@ export default function InvestorSignupPage() {
               </button>
               <button
                 onClick={handleNextStep}
-                disabled={!isStep5Valid()}
-                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-1 bg-[#3A8DFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0D3B66] transition-all"
               >
                 Continue
               </button>
             </div>
+            {stepError && (
+              <p className="text-sm text-red-600">{stepError}</p>
+            )}
           </div>
         )}
 

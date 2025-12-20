@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Upload, CheckCircle, ArrowLeft } from "lucide-react";
 
 export default function BusinessSignupPage() {
   // ========================================
   // GLOBAL STATE
   // ========================================
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -153,7 +156,13 @@ export default function BusinessSignupPage() {
     console.log("Business Signup Form Data:", formData);
     setTimeout(() => {
       setIsSubmitting(false);
-      alert("Business signup completed! Check console for form data.");
+      try {
+        localStorage.setItem("foundect_account_status", "pending_review");
+        localStorage.setItem("foundect_account_type", "business");
+      } catch (err) {
+        console.warn("Unable to persist status", err);
+      }
+      router.push("/auth/review?type=business");
     }, 1000);
   };
 
@@ -167,6 +176,29 @@ export default function BusinessSignupPage() {
       }));
     }
   }, [formData.businessType]);
+
+  // Redirect if account is already pending review or rejected
+  useEffect(() => {
+    try {
+      const status = localStorage.getItem("foundect_account_status");
+      const type = localStorage.getItem("foundect_account_type");
+      const approvedSeen = localStorage.getItem("foundect_account_approved_seen");
+
+      if (status === "pending_review") {
+        router.replace("/auth/review?type=business");
+      } else if (status === "rejected") {
+        router.replace("/auth/rejected?type=business");
+      } else if (status === "approved" && type === "business") {
+        if (approvedSeen === "true") {
+          router.replace("/business");
+        } else {
+          router.replace("/auth/approved?type=business");
+        }
+      }
+    } catch (err) {
+      console.warn("Unable to read stored status", err);
+    }
+  }, [router]);
 
   // Calculate total ownership percentage
   const totalOwnership = formData.owners.reduce(
@@ -794,12 +826,12 @@ export default function BusinessSignupPage() {
             className="mt-1 w-5 h-5 text-[#3A8DFF] border-gray-300 rounded focus:ring-2 focus:ring-[#3A8DFF]"
           />
           <span className="text-sm text-gray-700 group-hover:text-gray-900">
-            I agree to Foundect's{" "}
-            <a href="#" className="text-[#3A8DFF] hover:underline">
+            I agree to the platform{" "}
+            <a href="/terms" className="text-[#3A8DFF] hover:underline">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="#" className="text-[#3A8DFF] hover:underline">
+            <a href="/privacy" className="text-[#3A8DFF] hover:underline">
               Privacy Policy
             </a>
             .
@@ -906,25 +938,32 @@ export default function BusinessSignupPage() {
     <div className="w-full max-w-[520px]">
       {/* Glassmorphic Card */}
       <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 border border-white/20">
-          {/* Logo / Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#0D3B66] to-[#3A8DFF] bg-clip-text text-transparent">
-              Foundect
-            </h1>
-            <p className="text-gray-600 mt-2">Business Signup</p>
+        {/* Logo / Header */}
+        <div className="text-center mb-6">
+          <div className="flex justify-center">
+            <Image
+              src="/foundect-logo.svg"
+              alt="Foundect logo"
+              width={160}
+              height={56}
+              className="h-12 w-auto"
+              priority
+            />
           </div>
-
-          {/* Step Indicator (only show if not on final screen) */}
-          {currentStep <= 5 && renderStepIndicator()}
-
-          {/* Step Content */}
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
-          {currentStep === 5 && renderStep5()}
-          {currentStep === 6 && renderFinalScreen()}
+          <p className="text-gray-700 font-semibold mt-4">Business Signup</p>
         </div>
+
+        {/* Step Indicator (only show if not on final screen) */}
+        {currentStep <= 5 && renderStepIndicator()}
+
+        {/* Step Content */}
+        {currentStep === 1 && renderStep1()}
+        {currentStep === 2 && renderStep2()}
+        {currentStep === 3 && renderStep3()}
+        {currentStep === 4 && renderStep4()}
+        {currentStep === 5 && renderStep5()}
+        {currentStep === 6 && renderFinalScreen()}
+      </div>
 
       {/* Footer Links */}
       <div className="text-center mt-6">

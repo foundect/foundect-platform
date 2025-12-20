@@ -18,16 +18,6 @@
 │   ├── For Businesses Section
 │   └── Footer
 │
-├── /auth                   → Authentication Hub
-│   ├── Login Tab
-│   │   ├── Email Input
-│   │   └── Password Input
-│   └── Sign Up Tab
-│       ├── Role Selection
-│       │   ├── Individual Investor
-│       │   └── Business/SME
-│       └── Signup Forms (conditional)
-│
 ├── /explore                → Browse Campaigns
 │   └── Campaign Grid (6 dummy campaigns)
 │       ├── Green Textile Manufacturing
@@ -39,7 +29,9 @@
 │
 ├── /campaign/[id]          → Campaign Details Page
 │   ├── Campaign Identity Header
-│   ├── Primary CTA (Invest Now)
+│   ├── Primary CTA (Invest Now + Enable Alerts)
+│   ├── Financial Transparency Section
+│   ├── Campaign Media Section
 │   ├── Tab-based Content
 │   │   ├── Overview
 │   │   ├── Business
@@ -48,8 +40,7 @@
 │   │   ├── Shari'ah
 │   │   └── Legal
 │   ├── AI Assistant
-│   ├── Comments Section
-│   └── Final CTA
+│   └── Comments Section
 │
 ├── /invest/[campaignId]    → Investment Page
 │   ├── Campaign Header
@@ -64,7 +55,7 @@
 │   ├── Disclaimer & Acknowledgment
 │   └── Submit Investment
 │
-├── /support                → Support Center
+├── /support                → Support Center (Shared)
 │   ├── Quick Help Cards
 │   ├── Search Bar
 │   ├── FAQ Sections (Accordion)
@@ -81,6 +72,89 @@
 └── /contact                → Contact Form
     ├── Contact Info Cards
     └── Message Form
+```
+
+### Authentication Routes
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    AUTHENTICATION ROUTES                    │
+└─────────────────────────────────────────────────────────────┘
+
+/auth
+│
+├── /auth/login             → Universal Login Page
+│   ├── Email or Phone Input
+│   ├── Password Input (with show/hide toggle)
+│   ├── Remember Me Checkbox
+│   ├── Forgot Password Link
+│   └── Create Account Flow
+│       └── Account Type Selection Modal
+│           ├── Individual Investor → /auth/investor
+│           └── Business → /auth/business
+│
+├── /auth/investor           → Investor Signup (6 Steps)
+│   ├── Step 1: Account Setup
+│   │   ├── Full Name, Email, Phone (+88 fixed)
+│   │   ├── Password (with strength validation)
+│   │   ├── Terms & Conditions Checkbox
+│   │   └── Phone Verification (OTP)
+│   ├── Step 2: Investor Profile
+│   ├── Step 3: KYC & Nominee
+│   ├── Step 4: Bank Setup (Optional)
+│   ├── Step 5: Shari'ah Declaration
+│   └── Step 6: Knowledge Check (Quiz)
+│
+├── /auth/business           → Business Signup (5 Steps)
+│   ├── Step 1: Business Account Setup
+│   ├── Step 2: Business Information
+│   ├── Step 3: Ownership Structure
+│   ├── Step 4: Business Verification (Documents)
+│   └── Step 5: Shari'ah Compliance & Confirmation
+│
+├── /auth/review             → Account Under Review
+│   ├── Status: pending_review
+│   ├── Foundect Logo
+│   ├── "Your account is under review"
+│   ├── Approval Timeline Notice
+│   └── Contact Support Link
+│
+├── /auth/approved           → Account Approved
+│   ├── Status: approved
+│   ├── Success Confirmation
+│   ├── "Go to Dashboard" Button
+│   └── Routes to appropriate dashboard
+│
+└── /auth/rejected            → Account Rejected
+    ├── Status: rejected
+    ├── Rejection Notice
+    ├── Reason (if available)
+    └── Contact Support + Reapply Option
+```
+
+### Legal & Policy Pages (Static)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  LEGAL & POLICY PAGES                       │
+│              (Accessible to All Users)                      │
+└─────────────────────────────────────────────────────────────┘
+
+/terms                       → Terms & Conditions
+/privacy                     → Privacy Policy
+/risk-disclosure             → Risk Disclosure
+/user-agreement              → User Agreement
+/business-campaign-agreement → Business Campaign Agreement
+/shariah-compliance-policy   → Shari'ah Compliance Policy
+/aml-kyc-policy              → AML & KYC Policy
+/dispute-resolution-policy  → Dispute Resolution Policy
+
+All legal pages include:
+├── Foundect Logo (top-center)
+├── Last Updated: 20 December, 2025
+├── Scrollable Legal Document Format
+├── Support Page Link
+└── Email Contact Links
 ```
 
 ### Investor Routes (Protected - TODO)
@@ -116,11 +190,15 @@
 │
 ├── /investor/account       → My Account
 │   ├── Profile Header (Banner + Avatar)
-│   ├── Verification Status
-│   ├── Personal Information
+│   ├── Identity & Compliance (KYC)
+│   │   ├── Full Legal Name (Immutable)
+│   │   ├── NID Number (Immutable)
+│   │   ├── NID Document (View Only)
+│   │   └── E-TIN (Conditionally Editable)
+│   ├── Nominee Details (Full CRUD)
 │   ├── Profit Withdrawal Destination
-│   ├── Security Settings
-│   └── Logout
+│   │   └── Bank Account Management
+│   └── Logout Button
 │
 ├── /investor/transactions  → Transactions Ledger
 │   ├── Quick Overview (4 cards)
@@ -136,20 +214,20 @@
 │   └── Read/Unread States
 │
 └── /investor/settings      → Settings
-    ├── Security & Access
+    ├── General Settings
     ├── Investment Preferences
     ├── Notification Preferences
     ├── Financial Controls
+    │   └── Profit Withdrawal Timing
+    │       ├── Scheduled Distribution
+    │       ├── On Availability
+    │       └── End-of-Campaign Payout
     ├── Advanced Settings
-    ├── Community & Support
-    └── Account Controls
-    ├── Security
-    │   ├── Change Password
-    │   └── 2FA Setup
-    ├── Notification Preferences (5 toggles)
-    └── Account Actions
-        ├── Download Data
-        └── Deactivate Account
+    │   ├── Activity Logs
+    │   ├── Data & Exports
+    │   ├── Privacy Controls
+    │   └── Experimental Features
+    └── Community & Support
 ```
 
 ### Business Routes (Protected - TODO)
@@ -167,48 +245,45 @@
 │   │   ├── Total Funds Raised
 │   │   ├── Active Listings
 │   │   └── Total Investors
-│   ├── Quick Actions (3)
-│   │   ├── Create New Listing
-│   │   ├── View Listings
-│   │   └── Update Company Profile
-│   ├── Campaign Performance (2 campaigns)
+│   ├── Quick Actions (2)
+│   │   ├── Create New Campaign
+│   │   └── Explore Opportunities
 │   └── Recent Activity Feed
 │
 ├── /business/dashboard     → Business Dashboard
-│   ├── Header with Quick Actions
+│   ├── Header with Toggle
+│   │   ├── Launched Campaigns (Default)
+│   │   └── Invested Campaigns
 │   ├── Key Metrics (4 cards)
 │   ├── Campaign Performance
-│   ├── Profit Overview
+│   ├── Profit & Distribution
+│   │   └── Shari'ah-aware logic
 │   ├── Investor Engagement
 │   └── Recent Activity
 │
 ├── /business/financials    → Business Financials
 │   ├── Tab: Your Campaign Finances
-│   │   ├── Financial Overview (4 cards)
-│   │   ├── Campaign-wise Breakdown
-│   │   └── Recent Financial Activity
+│   │   ├── Financial Snapshot
+│   │   ├── Funds Breakdown
+│   │   ├── Profit & Distribution Overview
+│   │   └── Campaign-wise Summary
 │   └── Tab: Your Investments
-│       ├── Investment Overview (4 cards)
-│       ├── Active Investments List
-│       └── Recent Investment Activity
-│
-├── /business/listings      → Manage Campaigns
-│   ├── Summary Stats (4 cards)
-│   └── Campaign List (5 campaigns)
-│       ├── Green Textile - Expansion (Live)
-│       ├── Sustainable Product Line (Live)
-│       ├── Equipment Upgrade (Under Review)
-│       ├── Export Market Expansion (Draft)
-│       └── Working Capital Q1 (Completed)
+│       ├── Investment Snapshot
+│       ├── Invested Campaigns
+│       ├── Distribution Timeline
+│       └── Investment Activity
 │
 ├── /business/company       → Company Profile
 │   ├── Company Overview Header
-│   ├── Verification Status
-│   ├── Founders Section
+│   │   ├── Logo, Name, Sector
+│   │   ├── Location
+│   │   └── Verified Badge
+│   ├── Verification & Compliance
+│   ├── Founders & Management
 │   ├── Active Campaigns
 │   ├── Past Campaigns
-│   ├── Company Description
-│   └── Company Highlights
+│   ├── Business Description & Media
+│   └── Business Highlights
 │
 ├── /business/notifications → Notifications
 │   └── 6 Notifications
@@ -223,10 +298,12 @@
     ├── Top Summary Card
     ├── General Settings
     ├── Notification Preferences
-    ├── Security Settings
+    ├── Security & Access
     ├── Financial Settings
     ├── Advanced Settings
     └── Account Lifecycle
+        ├── Deactivate Account
+        └── Delete Account
 ```
 
 ## 🎨 Layout Structure
@@ -239,6 +316,8 @@
 │                                                         │
 │                   Page Content                          │
 │                                                         │
+├─────────────────────────────────────────────────────────┤
+│  SiteFooter (Legal Links, Support, Social Media)       │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -255,25 +334,35 @@
 │              │   │  (Centered)   │   │                 │
 │              │   └───────────────┘   │                 │
 │              └───────────────────────┘                 │
+│                                                         │
+│  NO FOOTER (Excluded from /auth/* routes)              │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### Dashboard Layout (Investor & Business)
 ```
 ┌─────────────┬───────────────────────────────────────────┐
-│             │  DashboardTopbar                          │
-│             │  (Title, Notifications, Profile Menu)     │
+│             │  Top Bar (Back/Notifications/Profile)     │
 │             ├───────────────────────────────────────────┤
-│  Dashboard  │                                           │
-│  Sidebar    │                                           │
-│             │          Page Content                     │
+│  Desktop    │                                           │
+│  Sidebar    │          Page Content                     │
+│  (lg:block) │                                           │
+│             │                                           │
 │  - Home     │                                           │
 │  - Dashboard│                                           │
-│  - Account  │                                           │
-│  - Notifs   │                                           │
+│  - AI       │                                           │
+│  - Explore  │                                           │
 │  - Settings │                                           │
+│  - Support  │                                           │
 │             │                                           │
-└─────────────┴───────────────────────────────────────────┘
+│             ├───────────────────────────────────────────┤
+│             │  Mobile Bottom Nav (lg:hidden)           │
+│             │  [Home] [Dashboard] [AI] [Explore] [Menu]│
+│             └───────────────────────────────────────────┘
+│                                                         │
+├─────────────────────────────────────────────────────────┤
+│  SiteFooter (Legal Links, Support, Social Media)       │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ## 🔄 Navigation Flow
@@ -282,15 +371,21 @@
 ```
 Landing (/bd)
     ↓
-Sign Up (/auth) → Select "Individual Investor"
+Login (/auth/login) → Select "Create Account" → "Individual Investor"
+    ↓
+Investor Signup (/auth/investor) - 6 Steps
+    ↓
+Account Review (/auth/review) - Status: pending_review
+    ↓
+Account Approved (/auth/approved) - Status: approved
     ↓
 Investor Home (/investor/home)
     ↓
     ├→ Explore Campaigns (/explore)
     │       ↓
-    │   View Campaign Details (TODO)
+    │   View Campaign Details (/campaign/[id])
     │       ↓
-    │   Make Investment (TODO)
+    │   Make Investment (/invest/[campaignId])
     │
     ├→ Dashboard (/investor/dashboard)
     │       ↓
@@ -311,7 +406,13 @@ Investor Home (/investor/home)
 ```
 Landing (/bd)
     ↓
-Sign Up (/auth) → Select "Business/SME"
+Login (/auth/login) → Select "Create Account" → "Business"
+    ↓
+Business Signup (/auth/business) - 5 Steps
+    ↓
+Account Review (/auth/review) - Status: pending_review
+    ↓
+Account Approved (/auth/approved) - Status: approved
     ↓
 Business Home (/business/home)
     ↓
@@ -323,19 +424,13 @@ Business Home (/business/home)
     │       ↓
     │   Submit for Verification
     │
-    ├→ Create Listing (TODO)
+    ├→ Dashboard (/business/dashboard)
     │       ↓
-    │   Fill Campaign Details
-    │       ↓
-    │   Submit for Review
+    │   View Campaign Performance
     │
-    ├→ Listings (/business/listings)
+    ├→ Financials (/business/financials)
     │       ↓
-    │   Manage Campaigns
-    │       ↓
-    │   View Investors
-    │       ↓
-    │   Post Updates
+    │   Track Finances & Investments
     │
     └→ Settings (/business/settings)
             ↓
@@ -356,18 +451,22 @@ Business Home (/business/home)
 /business/*  → Requires auth + role: "business"
 
 // Redirect logic
-Unauthenticated user → /auth
+Unauthenticated user → /auth/login
 Wrong role → Appropriate dashboard
+Pending review → /auth/review
+Rejected → /auth/rejected
 ```
 
 ## 📊 Route Statistics
 
-- **Total Routes:** 25 pages
-- **Public Routes:** 8 (Landing, Auth, Explore, Campaign Details, Investment, Support, About, Contact)
+- **Total Routes:** 40+ pages
+- **Public Routes:** 8 (Landing, Explore, Campaign Details, Investment, Support, About, Contact)
+- **Authentication Routes:** 6 (Login, Investor Signup, Business Signup, Review, Approved, Rejected)
+- **Legal/Policy Routes:** 8 (Terms, Privacy, Risk Disclosure, User Agreement, Business Campaign Agreement, Shari'ah Compliance, AML/KYC, Dispute Resolution)
 - **Investor Routes:** 7 (Home, Dashboard, Account, Transactions, Notifications, Settings, Explore)
-- **Business Routes:** 8 (Home, Dashboard, Financials, Listings, Company, Notifications, Settings, Explore)
+- **Business Routes:** 7 (Home, Dashboard, Financials, Company, Notifications, Settings, Explore)
 - **Layouts:** 3 (Root, Investor, Business)
-- **Shared Components:** Multiple (Headers, Cards, Forms, etc.)
+- **Shared Components:** Multiple (Headers, Footers, Cards, Forms, etc.)
 
 ## 🎯 Route Testing Checklist
 
@@ -376,18 +475,35 @@ After running `npm run dev`, test each route:
 ### Public Routes
 - [ ] `/` redirects to `/bd`
 - [ ] `/bd` loads with all sections
-- [ ] `/auth` shows login/signup tabs
 - [ ] `/explore` displays campaign grid with filters
-- [ ] `/campaign/[id]` shows campaign details with tabs
+- [ ] `/campaign/[id]` shows campaign details with tabs, financial transparency, and media
 - [ ] `/invest/[campaignId]` displays investment page
 - [ ] `/support` shows support center with FAQs
 - [ ] `/about` shows all content sections
 - [ ] `/contact` renders contact form
 
+### Authentication Routes
+- [ ] `/auth/login` shows universal login with account type selection
+- [ ] `/auth/investor` displays 6-step signup flow (mobile-optimized)
+- [ ] `/auth/business` displays 5-step signup flow (with logo)
+- [ ] `/auth/review` shows account under review page
+- [ ] `/auth/approved` shows account approved confirmation
+- [ ] `/auth/rejected` shows account rejected page
+
+### Legal & Policy Routes
+- [ ] `/terms` displays Terms & Conditions
+- [ ] `/privacy` displays Privacy Policy
+- [ ] `/risk-disclosure` displays Risk Disclosure
+- [ ] `/user-agreement` displays User Agreement
+- [ ] `/business-campaign-agreement` displays Business Campaign Agreement
+- [ ] `/shariah-compliance-policy` displays Shari'ah Compliance Policy
+- [ ] `/aml-kyc-policy` displays AML & KYC Policy
+- [ ] `/dispute-resolution-policy` displays Dispute Resolution Policy
+
 ### Investor Routes
 - [ ] `/investor/home` displays welcome and quick actions
 - [ ] `/investor/dashboard` shows comprehensive portfolio dashboard
-- [ ] `/investor/account` renders profile with banner and verification
+- [ ] `/investor/account` renders profile with KYC and nominee details
 - [ ] `/investor/transactions` displays transaction ledger
 - [ ] `/investor/notifications` lists grouped notifications
 - [ ] `/investor/settings` shows all preference sections
@@ -396,19 +512,28 @@ After running `npm run dev`, test each route:
 - [ ] `/business/home` displays business welcome and actions
 - [ ] `/business/dashboard` shows operational control center
 - [ ] `/business/financials` displays two-tab financial view
-- [ ] `/business/listings` shows campaign list
 - [ ] `/business/company` renders public company profile
 - [ ] `/business/notifications` lists notifications
 - [ ] `/business/settings` shows account settings sections
 
 ### Navigation
-- [ ] Public header links work
-- [ ] Investor sidebar navigation works
-- [ ] Business sidebar navigation works
+- [ ] Desktop sidebar navigation works (Investor & Business)
+- [ ] Mobile bottom navigation is fixed and always visible
+- [ ] Mobile bottom nav hidden on desktop (lg:hidden)
+- [ ] Desktop sidebar hidden on mobile (hidden lg:block)
 - [ ] Active route highlighting works
-- [ ] Mobile responsive navigation
+- [ ] Footer appears on all pages except `/auth/*` routes
+
+### Footer
+- [ ] Footer appears on public pages
+- [ ] Footer appears on authenticated pages
+- [ ] Footer does NOT appear on `/auth/*` routes
+- [ ] Footer links to all legal pages
+- [ ] Footer includes Support page link
+- [ ] Footer includes social media links
 
 ---
 
 **All routes are fully implemented and ready for testing!**
 
+**Last Updated:** December 2025
