@@ -1,16 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { PublicHeader } from "@/components/layouts/PublicHeader";
 import { GlassCard, GlassCardHeader, GlassCardTitle, GlassCardContent } from "@/components/ui/GlassCard";
 import { GlassTile } from "@/components/ui/GlassTile";
-import { GlassNavBar } from "@/components/ui/GlassNavBar";
-import { AIChatDrawer } from "@/components/ui/AIChatDrawer";
 import { Shield, Heart, TrendingUp, Users, CheckCircle, Sparkles, Target, Award } from "lucide-react";
 
 export default function AboutPage() {
-  const [aiDrawerOpen, setAIDrawerOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 relative overflow-hidden">
       {/* Decorative background elements */}
@@ -19,7 +14,7 @@ export default function AboutPage() {
       
       <PublicHeader />
 
-      <div className="container mx-auto px-4 pt-32 pb-20">
+      <div className="container mx-auto px-4 pt-32 pb-16">
         {/* Hero Section */}
         <div className="max-w-4xl mx-auto text-center mb-16 animate-fade-in">
           <span className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-pill glass-bg border border-white/30 text-sm font-medium text-blue-500">
@@ -183,12 +178,6 @@ export default function AboutPage() {
           </div>
         </section>
       </div>
-
-      {/* Mobile Navigation */}
-      <GlassNavBar onAIClick={() => setAIDrawerOpen(true)} />
-      
-      {/* AI Chat Drawer */}
-      <AIChatDrawer open={aiDrawerOpen} onClose={() => setAIDrawerOpen(false)} />
     </div>
   );
 }

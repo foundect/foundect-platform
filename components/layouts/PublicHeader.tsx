@@ -62,7 +62,7 @@ export function PublicHeader() {
                 Login
               </GlassButton>
             </Link>
-            <Link href="/auth">
+            <Link href="/auth/signup">
               <GlassButton variant="primary" size="sm">
                 Sign Up
               </GlassButton>
@@ -99,7 +99,7 @@ export function PublicHeader() {
                   Login
                 </GlassButton>
               </Link>
-              <Link href="/auth">
+              <Link href="/auth/signup">
                 <GlassButton variant="primary" className="w-full">
                   Sign Up
                 </GlassButton>

@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  // Supabase RLS is the source of truth; Prisma should not attempt to manage constraints.
+  // This lets us model relations even if the database doesn't have explicit FK constraints.
+  relationMode = "prisma"
+}
+
+enum Role {
+  investor
+  business
+  admin
+}
+
+model profiles {
+  user_id    String   @id @db.Uuid
+  role       Role
+  status     String   @db.Text
+  created_at DateTime @db.Timestamptz(6)
+}
+
+model investor_profiles {
+  user_id      String   @id @db.Uuid
+  full_name    String   @db.Text
+  phone        String   @db.Text
+  kyc_verified Boolean
+  created_at   DateTime @db.Timestamptz(6)
+}
+
+model business_profiles {
+  user_id        String   @id @db.Uuid
+  business_name  String   @db.Text
+  business_email String   @db.Text
+  phone          String   @db.Text
+  verified       Boolean
+  created_at     DateTime @db.Timestamptz(6)
+}
+
+model campaigns {
+  id               String   @id @db.Uuid
+  business_user_id String   @db.Uuid
+  title            String   @db.Text
+  status           String   @db.Text
+  created_at       DateTime @db.Timestamptz(6)
+  // Prisma Decimal maps to Postgres `numeric` by default.
+  target_amount    Decimal
+  raised_amount    Decimal
+}
+
+model investor_transactions {
+  id          String   @id @db.Uuid
+  user_id     String   @db.Uuid
+  campaign_id String   @db.Uuid
+  // Prisma Decimal maps to Postgres `numeric` by default.
+  amount      Decimal
+  currency    String   @db.Text
+  type        String   @db.Text
+  status      String   @db.Text
+  created_at  DateTime @db.Timestamptz(6)
+}

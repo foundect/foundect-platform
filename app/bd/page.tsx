@@ -279,7 +279,7 @@ export default function BangladeshLandingPage() {
                 <h4 className="font-semibold text-text-900 mb-3">Get Started</h4>
                 <ul className="space-y-2 text-sm">
                   <li>
-                    <Link href="/auth" className="text-gray-600 hover:text-blue-500 transition-colors">
+                    <Link href="/auth/signup" className="text-gray-600 hover:text-blue-500 transition-colors">
                       Sign Up
                     </Link>
                   </li>

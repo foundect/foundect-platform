@@ -2,18 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 
-export default function LoginPage() {
+export default function AuthPage() {
   const router = useRouter();
+
   const [formData, setFormData] = useState({
     emailOrPhone: "",
     password: "",
     rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showAccountTypeModal, setShowAccountTypeModal] = useState(false);
   const [error, setError] = useState("");
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -39,19 +40,6 @@ export default function LoginPage() {
       router.push("/business/home");
     } else {
       router.push("/investor/home");
-    }
-  };
-
-  const handleCreateAccount = () => {
-    setShowAccountTypeModal(true);
-  };
-
-  const handleAccountTypeSelect = (type: "investor" | "business") => {
-    setShowAccountTypeModal(false);
-    if (type === "investor") {
-      router.push("/auth/investor");
-    } else {
-      router.push("/auth/business");
     }
   };
 
@@ -160,65 +148,15 @@ export default function LoginPage() {
         <div className="mt-6 text-center border-t border-gray-200 pt-6">
           <p className="text-sm text-gray-600">
             New to Foundect?{" "}
-            <button
-              onClick={handleCreateAccount}
+            <Link
+              href="/auth/signup"
               className="text-blue-600 hover:text-blue-700 font-semibold"
             >
               Create an account
-            </button>
+            </Link>
           </p>
         </div>
       </div>
-
-      {/* Account Type Selection Modal */}
-      {showAccountTypeModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full animate-fade-in">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-              Choose Account Type
-            </h2>
-            <p className="text-gray-600 text-sm text-center mb-6">
-              Select the type of account you want to create
-            </p>
-
-            <div className="space-y-4">
-              {/* Individual Investor Option */}
-              <button
-                onClick={() => handleAccountTypeSelect("investor")}
-                className="w-full bg-white border-2 border-gray-200 hover:border-blue-500 rounded-xl p-6 text-left transition-all group"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600">
-                  Individual Investor
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Invest in Shari'ah-compliant business opportunities
-                </p>
-              </button>
-
-              {/* Business Option */}
-              <button
-                onClick={() => handleAccountTypeSelect("business")}
-                className="w-full bg-white border-2 border-gray-200 hover:border-blue-500 rounded-xl p-6 text-left transition-all group"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600">
-                  Business
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Raise funds or invest as a business
-                </p>
-              </button>
-            </div>
-
-            {/* Cancel Button */}
-            <button
-              onClick={() => setShowAccountTypeModal(false)}
-              className="w-full mt-4 text-gray-600 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
